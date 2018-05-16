@@ -1,4 +1,4 @@
-# Muses: Distributed Data Migration system for Polystores [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/bdapro-muses/)
+# Muses: Distributed Data Migration System for Polystores [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/bdapro-muses/)
 The description of Muses
 
 ## Getting Started
