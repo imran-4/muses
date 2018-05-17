@@ -1,0 +1,1 @@
+The work is under exclusive copyright by default. Unless we include a license that specifies otherwise, nobody else can use, copy, distribute, or modify the work without being at risk of take-downs, shake-downs, or litigation.

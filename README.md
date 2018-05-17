@@ -44,9 +44,9 @@ The deployment details are:
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/mi-1-0-0/contributing.md) for details.
+Please read [CONTRIBUTING.md](https://github.com/mi-1-0-0/muses/CONTRIBUTING.md) for details.
 
 
 ## License
 
-This project is licensed under the ... License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is NOT Licensed - see the [LICENSE.md](https://github.com/mi-1-0-0/muses/LICENSE.md) file for details.
