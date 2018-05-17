@@ -26,33 +26,70 @@
 	</modules>
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.eclipse.m2e</groupId>
-				<artifactId>lifecycle-mapping</artifactId>
-				<version>1.0.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.1.1</version>
-			</dependency>
+
+			<!-- <dependency> -->
+			<!-- <groupId>org.eclipse.m2e</groupId> -->
+			<!-- <artifactId>lifecycle-mapping</artifactId> -->
+			<!-- <version>1.0.0</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-shade-plugin</artifactId> -->
+			<!-- <version>3.1.1</version> -->
+			<!-- </dependency> -->
+
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-source-plugin</artifactId> -->
+			<!-- <version>3.0.1</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.scala-lang</groupId> -->
+			<!-- <artifactId>scala-compiler</artifactId> -->
+			<!-- <version>${scala.version}</version> -->
+			<!-- <scope>compile</scope> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>net.alchim31.maven</groupId> -->
+			<!-- <artifactId>scala-maven-plugin</artifactId> -->
+			<!-- <version>3.3.2</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.arrow</groupId> -->
+			<!-- <artifactId>arrow-tools</artifactId> -->
+			<!-- <version>${arrow.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.arrow</groupId> -->
+			<!-- <artifactId>arrow-vector</artifactId> -->
+			<!-- <version>${arrow.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.arrow</groupId> -->
+			<!-- <artifactId>arrow-memory</artifactId> -->
+			<!-- <version>${arrow.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.arrow</groupId> -->
+			<!-- <artifactId>arrow-format</artifactId> -->
+			<!-- <version>${arrow.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.arrow</groupId> -->
+			<!-- <artifactId>arrow-java-root</artifactId> -->
+			<!-- <version>${arrow.version}</version> -->
+			<!-- </dependency> -->
+
+			<!-- scala -->
 
 			<dependency>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
-			</dependency>
-			<dependency>
+				<artifactId>scala-library</artifactId>
 				<groupId>org.scala-lang</groupId>
-				<artifactId>scala-compiler</artifactId>
 				<version>${scala.version}</version>
-				<scope>compile</scope>
 			</dependency>
-			<dependency>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.3.2</version>
-			</dependency>
+
+			<!-- arrow -->
+
 			<dependency>
 				<groupId>org.apache.arrow</groupId>
 				<artifactId>arrow-tools</artifactId>
@@ -78,29 +115,48 @@
 				<artifactId>arrow-java-root</artifactId>
 				<version>${arrow.version}</version>
 			</dependency>
+
+
+
+			<!-- logs -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.6</version>
+			</dependency>
+
+
+			<!-- tests -->
+			<dependency>
+				<groupId>org.scalatest</groupId>
+				<artifactId>scalatest_${scala.version}</artifactId>
+				<version>2.2.2</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<artifactId>junit</artifactId>
+				<groupId>junit</groupId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
+		<testSourceDirectory>src/test/scala</testSourceDirectory>
+
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
 				<version>3.3.2</version>
+				<configuration>
+					<scalaVersion>${scala.version}</scalaVersion>
+					<args>
+						<arg>-optimize</arg>
+						<arg>-target:jvm-1.8</arg>
+					</args>
+				</configuration>
 				<executions>
 					<execution>
 						<id>scala-compile-first</id>
@@ -120,6 +176,7 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
@@ -133,52 +190,110 @@
 							<goal>compile</goal>
 						</goals>
 					</execution>
+<!-- 					<execution> -->
+<!-- 						<id>attach-sources</id> -->
+<!-- 						<phase>package</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>jar-no-fork</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
 				</executions>
+
+			</plugin>
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-source-plugin</artifactId> -->
+			<!-- <version>3.0.1</version> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <id>attach-sources</id> -->
+			<!-- <phase>package</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>jar-no-fork</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>net.alchim31.maven</groupId> -->
+			<!-- <artifactId>scala-maven-plugin</artifactId> -->
+			<!-- <version>3.3.2</version> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <id>scala-compile-first</id> -->
+			<!-- <phase>process-resources</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>add-source</goal> -->
+			<!-- <goal>compile</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- <execution> -->
+			<!-- <id>scala-test-compile</id> -->
+			<!-- <phase>process-test-resources</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>testCompile</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+			<!-- <plugin> -->
+			<!-- <artifactId>maven-compiler-plugin</artifactId> -->
+			<!-- <version>2.4</version> -->
+			<!-- <configuration> -->
+			<!-- <source>${java.version}</source> -->
+			<!-- <target>${java.version}</target> -->
+			<!-- </configuration> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <phase>compile</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>compile</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+		</plugins>
+	<resources>
+		<resource>
+			<directory>src/main/scala</directory>
+			<includes>
+				<include>**/*.scala</include>
+			</includes>
+		</resource>
+	</resources>
+	<pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.m2e</groupId>
+				<artifactId>lifecycle-mapping</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<lifecycleMappingMetadata>
+						<pluginExecutions>
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>
+										net.alchim31.maven
+									</groupId>
+									<artifactId>
+										scala-maven-plugin
+									</artifactId>
+									<versionRange>
+										[3.3.2,)
+									</versionRange>
+									<goals>
+										<goal>compile</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore></ignore>
+								</action>
+							</pluginExecution>
+						</pluginExecutions>
+					</lifecycleMappingMetadata>
+				</configuration>
 			</plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/scala</directory>
-				<includes>
-					<include>**/*.scala</include>
-				</includes>
-			</resource>
-		</resources>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											net.alchim31.maven
-										</groupId>
-										<artifactId>
-											scala-maven-plugin
-										</artifactId>
-										<versionRange>
-											[3.3.2,)
-										</versionRange>
-										<goals>
-											<goal>compile</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+	</pluginManagement>
 	</build>
 </project>
