@@ -10,7 +10,7 @@
 	<artifactId>muses-akka</artifactId>
 
 	<properties>
-		<java.version>1.8.0_171</java.version>
+		<java.version>1.8</java.version>
 		<scala.version>2.12.6</scala.version>
 		<akka.version>2.5.12</akka.version>
 	</properties>

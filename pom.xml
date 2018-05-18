@@ -11,7 +11,7 @@
 		<url>http://dima.tu-berlin.de/</url>
 	</organization>
 	<properties>
-		<java.version>1.8.0_171</java.version>
+		<java.version>1.8</java.version>
 		<scala.version>2.12.6</scala.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -23,6 +23,9 @@
 		<module>muses-netty</module>
 		<module>muses-akka</module>
 		<module>muses-connector</module>
+		<module>muses-commons</module>
+		<module>muses-commons</module>
+		<module>examples</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -86,43 +89,6 @@
 				<artifactId>scala-library</artifactId>
 				<groupId>org.scala-lang</groupId>
 				<version>${scala.version}</version>
-			</dependency>
-
-			<!-- arrow -->
-
-			<dependency>
-				<groupId>org.apache.arrow</groupId>
-				<artifactId>arrow-tools</artifactId>
-				<version>${arrow.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.arrow</groupId>
-				<artifactId>arrow-vector</artifactId>
-				<version>${arrow.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.arrow</groupId>
-				<artifactId>arrow-memory</artifactId>
-				<version>${arrow.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.arrow</groupId>
-				<artifactId>arrow-format</artifactId>
-				<version>${arrow.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.arrow</groupId>
-				<artifactId>arrow-java-root</artifactId>
-				<version>${arrow.version}</version>
-			</dependency>
-
-
-
-			<!-- logs -->
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.7.6</version>
 			</dependency>
 
 

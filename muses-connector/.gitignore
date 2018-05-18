@@ -2,4 +2,7 @@
 .settings/*
 .classpath
 .project
-
+./.cache-main
+./muses-connector.iml
+./.classpath
+./.settings/org.eclipse.jdt.core.prefs

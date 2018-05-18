@@ -10,7 +10,7 @@
 	<artifactId>muses-connector</artifactId>
 
 	<properties>
-		<java.version>1.8.0_171</java.version>
+		<java.version>1.8</java.version>
 		<scala.version>2.12.6</scala.version>
 		<arrow.version>0.9.0</arrow.version>
 	</properties>
