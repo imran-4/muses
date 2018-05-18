@@ -11,12 +11,12 @@
 		<url>http://dima.tu-berlin.de/</url>
 	</organization>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>1.8.0_171</java.version>
 		<scala.version>2.12.6</scala.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<muses.version>${project.version}</muses.version>
-		<arrow.version>0.9.0</arrow.version>
+<!-- 	<arrow.version>0.9.0</arrow.version> -->
 		<junit.version>4.11</junit.version>
 	</properties>
 	<modules>
