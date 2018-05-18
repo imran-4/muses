@@ -8,8 +8,8 @@ muses-connector/.cache-main
 muses-connector/muses-connector.iml
 muses-netty/muses-netty.iml
 muses-connector/.classpath
-muses-connector/.settings
-muses-netty/.settings
+muses-connector/.settings/*
+muses-netty/.settings/*
 muses-netty/.project
-muses-akka/.settings
+muses-akka/.settings/*
 muses-akka/.project
