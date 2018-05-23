@@ -12,7 +12,8 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<scala.version>2.12.6</scala.version>
-		<akka.version>2.5.12</akka.version>
+		<akka.version>2.5.11</akka.version>
+		<akka.scala.version>2.12</akka.scala.version>
 	</properties>
 
 
@@ -27,51 +28,50 @@
 		<!-- akka -->
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-actor_2.12</artifactId>
+			<artifactId>akka-actor_${akka.scala.version}</artifactId>
 			<version>${akka.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-testkit_2.12</artifactId>
+			<artifactId>akka-testkit_${akka.scala.version}</artifactId>
 			<version>${akka.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-slf4j_2.12</artifactId>
+			<artifactId>akka-slf4j_${akka.scala.version}</artifactId>
 			<version>${akka.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-stream_2.12</artifactId>
+			<artifactId>akka-stream_${akka.scala.version}</artifactId>
 			<version>${akka.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-http_2.12</artifactId>
+			<artifactId>akka-http_${akka.scala.version}</artifactId>
 			<version>10.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-cluster_2.12</artifactId>
+			<artifactId>akka-cluster_${akka.scala.version}</artifactId>
 			<version>${akka.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-remote_2.12</artifactId>
+			<artifactId>akka-remote_${akka.scala.version}</artifactId>
 			<version>${akka.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-http-testkit_2.12</artifactId>
+			<artifactId>akka-http-testkit_${akka.scala.version}</artifactId>
 			<version>10.1.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-stream-testkit_2.12</artifactId>
+			<artifactId>akka-stream-testkit_${akka.scala.version}</artifactId>
 			<version>${akka.version}</version>
-			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
