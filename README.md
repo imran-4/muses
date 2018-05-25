@@ -16,6 +16,7 @@ To start the data migration, run the ```run-muses.sh``` script. It takes the fol
 You need the following tools to run the program: 
 
 - JDK 1.8 or above
+- Apache Hadoop Yarn
 - Maven
 - Scala
 
@@ -35,6 +36,7 @@ To run the unit tests, ```jUnit 4.11``` is used. To run the tests and see the re
 You need the following tools to run and deploy the system:
 
 - JDK 1.8 or above
+- Apache Hadoop Yarn
 
 ## Built With
 

@@ -1,0 +1,23 @@
+---
+# tasks file for oracle_jdk
+- name: Install add-apt-repostory
+  apt: name=software-properties-common state=latest
+  become: yes
+
+- name: Add Java Repository
+  apt_repository: repo='ppa:webupd8team/java'
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+
+
+- name: Accept Java 8 License
+  debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+  become: yes
+
+- name: Install Java 8
+  apt: name={{ item }} state=latest
+  become: yes
+  with_items:
+    - oracle-java8-installer
+    - ca-certificates
+    - oracle-java8-set-default

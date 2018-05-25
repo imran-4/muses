@@ -1,0 +1,5 @@
+---
+# vars file for hadoop-config
+
+deploy_user: root
+hadoop_location: /home/root/hadoop/

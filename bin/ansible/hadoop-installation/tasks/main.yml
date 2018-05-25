@@ -1,0 +1,18 @@
+---
+# tasks file for hadoop-common
+
+- name: "Get Hadoop"
+  get_url:
+    url: "{{ download_link }}"
+    dest: "/home/{{ deploy_user }}/"
+    checksum: "md5:{{ md5_value }}"
+    force: true
+  register: hadoop_archive
+
+- name: "Unarchive source"
+  unarchive:
+    src: "/home/{{ deploy_user }}/{{ hadoop_with_version }}"
+    dest: "/home/{{ deploy_user }}/"
+    copy: no
+    #remote_src: yes
+  #when: hadoop_archive is changed

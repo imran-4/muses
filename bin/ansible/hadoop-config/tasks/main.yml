@@ -1,0 +1,8 @@
+---
+# tasks file for hadoop-config
+#set some other configuration paramter for hadoop and yarn if required.
+
+- name: "Run YARN"
+  script: "{{ hadoop_location }}/sbin/start-yarn.sh"
+  environment:
+

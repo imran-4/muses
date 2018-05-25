@@ -1,0 +1,14 @@
+[musesmanager]
+master1
+
+[musesnodes]
+node1
+node2
+node3
+
+[publisher]
+node1
+node2
+
+[consumer]
+node3

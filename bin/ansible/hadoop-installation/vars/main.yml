@@ -1,0 +1,6 @@
+---
+# vars file for hadoop-common
+deploy_user: root
+download_link: "http://apache.lauf-forum.at/hadoop/common/hadoop-2.8.4/hadoop-2.8.4.tar.gz"
+md5_value: b30b409bb69185003b3babd1504ba224
+hadoop_with_version: hadoop-2.8.4.tar.gz
