@@ -8,6 +8,12 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>muses-connector</artifactId>
+	<packaging>pom</packaging>
+	<modules>
+		<module>file-connector</module>
+		<module>rdbms-connector</module>
+		<module>arrow-manager</module>
+	</modules>
 
 	<properties>
 		<java.version>1.8</java.version>
