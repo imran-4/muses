@@ -17,7 +17,8 @@ object Main {
   def main(args: Array[String]): Unit = {
     val csvLines: Stream[Array[String]] = Source.fromFile(new File("/home/mi/abc.csv")).getLines.toStream.map(line => line.split(","))
 
-    var allocator = new RootAllocator(AllocationListener.NOOP, Long.MaxValue)
+    var allocator:BufferAllocator = new RootAllocator(AllocationListener.NOOP, Long.MaxValue)
+    
     //DecimalVector.class, "decimal", new ArrowType.Decimal(10, scale), allocator
     var scale=3
 
