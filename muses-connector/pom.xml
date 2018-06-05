@@ -57,6 +57,17 @@
 			<artifactId>arrow-java-root</artifactId>
 			<version>${arrow.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>6.0.6</version>
+		</dependency>
+		<dependency>
+			<artifactId>junit</artifactId>
+			<groupId>junit</groupId>
+			<version>4.11</version>
+		</dependency>
 	</dependencies>
 
 	<build>
