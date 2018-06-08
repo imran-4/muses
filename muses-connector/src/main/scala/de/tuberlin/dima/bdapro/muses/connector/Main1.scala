@@ -10,6 +10,34 @@ import org.apache.arrow.vector.types.pojo._
 
 
 object Main1 {
+
+  def getArrowType(typeName: String) : ArrowType = {
+    val arrowType:ArrowType = typeName match {
+      case "INT"  => new ArrowType.Int(32, true)
+      case "DATE"  => new ArrowType.Date(DateUnit.DAY)
+      case "VARCHAR"  => new ArrowType.Utf8()
+      case "CHAR"  => new ArrowType.Utf8()
+
+      case _  => throw new Exception("Not supported.") // the default, catch-all
+    }
+    return arrowType
+  }
+
+  def getFieldVector(typ: ArrowType, x: FieldVector) : FieldVector = {
+    var vectorType: FieldVector = null
+    if (typ.isInstanceOf[ArrowType.Int]) {
+      vectorType = x.asInstanceOf[IntVector]
+    } else if (typ.isInstanceOf[ArrowType.Date]) {
+      vectorType = x.asInstanceOf[DateDayVector]
+    } else if (typ.isInstanceOf[ArrowType.Utf8]) {
+      //vectorType = x.asInstanceOf[VarCharVector]
+    } else {
+      throw new Exception("No corresponding vector")
+    }
+    return vectorType
+
+  }
+
   def main(args: Array[String]): Unit = {
     // connect to the database named "mysql" on the localhost
     val driver = "com.mysql.jdbc.Driver"
@@ -28,7 +56,11 @@ object Main1 {
     val columnsNumber = rsmd.getColumnCount
     var i = 1
     println("Columns")
+    var columns: util.ArrayList[Tuple2[String, String]] = new util.ArrayList[Tuple2[String, String]]
     for (i <- 1 to columnsNumber) {
+
+      columns.add((rsmd.getColumnName(i),rsmd.getColumnTypeName(i)))
+
       System.out.println(rsmd.getColumnName(i))
     }
 
@@ -47,58 +79,95 @@ object Main1 {
     }
     //........................................................................................
 
-    var field1: Field = field("emp_no", new ArrowType.Int(32, true))
-    var field2: Field = field("birth_date", new ArrowType.Date(DateUnit.DAY))
-    var field3: Field = field("first_name", new ArrowType.Utf8())
-    var field4: Field = field("last_name", new ArrowType.Utf8())
-    var field5: Field = field("gender", new ArrowType.Utf8())
-    var field6: Field = field("hire_date", new ArrowType.Date(DateUnit.DAY))
+    var fields:util.ArrayList[Field] = new util.ArrayList[Field]()
+    columns.forEach(x => {
+      fields.add(field(x._1, getArrowType(x._2)))
+    })
 
-    var fieldList = new util.ArrayList[Field]()
-    fieldList.add(field1)
-    fieldList.add(field2)
-    fieldList.add(field3)
-    fieldList.add(field4)
-    fieldList.add(field5)
-    fieldList.add(field6)
+//
 
-    val sch = new Schema(fieldList)
+    val sch = new Schema(fields)
 
     val allocator: BufferAllocator = new RootAllocator(AllocationListener.NOOP, Long.MaxValue)
-
     val schemaRoot = VectorSchemaRoot.create(sch, allocator)
-
-    var fieldVector1 = schemaRoot.getVector("emp_no").getDataBuffer
-
-    schemaRoot.getFieldVectors.get(0).allocateNew
-    val vector = schemaRoot.getFieldVectors.get(0).asInstanceOf[IntVector]
-
     val fieldVectors = schemaRoot.getFieldVectors
-    var empnoVector = fieldVectors.get(0).asInstanceOf[IntVector]
-    println("--------------------")
 
-    var vex = schemaRoot.getVector("first_name")
-    var valueCount = 0
-    while(it.hasNext) {
-      var data = it.next().getInt(1)
+//
+//    var vectors:util.ArrayList[FieldVector] = new util.ArrayList[FieldVector]
+//    fieldVectors.forEach(x=> {
+//      var typ = x.getField.getFieldType.getType
+//      vectors.add(getFieldVector(typ, x))
+//      vectors.get(0).setSafe()
+//
+//    })
+//    println()
+//
+    var count = 0
+    while (it.hasNext) {
+      fieldVectors.forEach(x => {
+        var name = x.getField.getName
+        var typ1 = x.getField.getType
+        var next = it.next()
+        if (typ1.isInstanceOf[ArrowType.Int]){
+          var id = next.getInt(name)
 
-      empnoVector.setSafe(valueCount, data)
+          x.asInstanceOf[IntVector].setSafe(count, id) //
+          println()
+        } else if (typ1.isInstanceOf[ArrowType.Date]) {
 
-      valueCount += 1
+        }
+
+
+      })
+      count += 1
     }
 
-    empnoVector.setValueCount(valueCount)
+println()
 
-    val firstVector = schemaRoot.getFieldVectors.get(0)
 
-    var newcount = firstVector.getValueCount
-    var vc = 0
-    for (vc <- 0 until newcount) {
+    //    fieldVectors.forEach(x=> {
+//      var typ = x.getField.getFieldType.getType
+//      val vector = getFieldVector(typ, x)
+//      while (it.hasNext) {
+//        var i : Int = 0
+//        for (i <- 0 until columns.size()) {
+//          var data = it.next().getObject(i)
+//          vector.setSafe(, data)
+//        }
+//        println(data)
+//      }
+//    })
 
-     var it1 = firstVector.getObject(vc)
 
-      println(it1)
-    }
+
+//
+//    val temp:IntVector = fieldVectors.get(0).asInstanceOf[IntVector]
+//    var empnoVector = fieldVectors.get(0).asInstanceOf[IntVector]
+//    println("--------------------")
+//
+//    var vex = schemaRoot.getVector("first_name")
+//    var valueCount = 0
+//    while(it.hasNext) {
+//
+//      var data = it.next().getObject(0)
+//
+//      empnoVector.setSafe(valueCount, data)
+//
+//      valueCount += 1
+//    }
+//
+//    empnoVector.setValueCount(valueCount)
+//
+//    val firstVector = schemaRoot.getFieldVectors.get(0)
+//
+//    var newcount = firstVector.getValueCount
+//    var vc = 0
+//    for (vc <- 0 until newcount) {
+//
+//     var it1 = firstVector.getObject(vc)
+//
+//      println(it1)
+//    }
   }
 
   import scala.collection.JavaConverters._
