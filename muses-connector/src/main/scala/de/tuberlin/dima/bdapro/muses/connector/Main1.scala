@@ -1,12 +1,16 @@
 package de.tuberlin.dima.bdapro.muses.connector
 
-import java.sql.{DriverManager, ResultSet}
+import java.io.File
+import java.sql.{Date, DriverManager, ResultSet}
 import java.{sql, util}
 
+import de.tuberlin.dima.bdapro.muses.connector.arrow.reader.ArrowReader
 import org.apache.arrow.memory.{AllocationListener, BufferAllocator, RootAllocator}
 import org.apache.arrow.vector._
+import org.apache.arrow.vector.ipc.JsonFileWriter
 import org.apache.arrow.vector.types.DateUnit
 import org.apache.arrow.vector.types.pojo._
+import org.apache.arrow.vector.util.Text
 
 
 object Main1 {
@@ -23,19 +27,31 @@ object Main1 {
     return arrowType
   }
 
-  def getFieldVector(typ: ArrowType, x: FieldVector) : FieldVector = {
-    var vectorType: FieldVector = null
+  var arrowReader :ArrowReader = new ArrowReader
+  var arrowWriter :ArrowReader = new ArrowReader
+  def writeData(x: FieldVector, o: Object, count: Int ) : Unit = {
+
+    var typ = x.getField.getType
     if (typ.isInstanceOf[ArrowType.Int]) {
-      vectorType = x.asInstanceOf[IntVector]
-    } else if (typ.isInstanceOf[ArrowType.Date]) {
-      vectorType = x.asInstanceOf[DateDayVector]
+      var value = o.asInstanceOf[Int]
+      x.asInstanceOf[IntVector].setSafe(count, value)
+
+      println(">>>>>>" , x.asInstanceOf[IntVector].getObject(count))
+    }
+    else if (typ.isInstanceOf[ArrowType.Date]) {
+      var value = o.asInstanceOf[Date]
+      x.asInstanceOf[DateDayVector].setSafe(count, value.toLocalDate.getYear)
+      println(">>>>>>" , x.asInstanceOf[DateDayVector].getObject(count))
     } else if (typ.isInstanceOf[ArrowType.Utf8]) {
-      //vectorType = x.asInstanceOf[VarCharVector]
+      var value = o.asInstanceOf[String]
+      import java.nio.charset.Charset
+      val utf8Charset = Charset.forName("UTF-8")
+      val arrbuf = value.getBytes(utf8Charset)
+      x.asInstanceOf[VarCharVector].setSafe(count, arrbuf)
+      println(">>>>>>" , x.asInstanceOf[VarCharVector].getObject(count))
     } else {
       throw new Exception("No corresponding vector")
     }
-    return vectorType
-
   }
 
   def main(args: Array[String]): Unit = {
@@ -84,96 +100,63 @@ object Main1 {
       fields.add(field(x._1, getArrowType(x._2)))
     })
 
-//
-
     val sch = new Schema(fields)
 
     val allocator: BufferAllocator = new RootAllocator(AllocationListener.NOOP, Long.MaxValue)
     val schemaRoot = VectorSchemaRoot.create(sch, allocator)
     val fieldVectors = schemaRoot.getFieldVectors
 
-//
-//    var vectors:util.ArrayList[FieldVector] = new util.ArrayList[FieldVector]
-//    fieldVectors.forEach(x=> {
-//      var typ = x.getField.getFieldType.getType
-//      vectors.add(getFieldVector(typ, x))
-//      vectors.get(0).setSafe()
-//
-//    })
-//    println()
-//
-    var count = 0
+    var count = -1
     while (it.hasNext) {
+      var next = it.next()
+      count += 1
       fieldVectors.forEach(x => {
         var name = x.getField.getName
-        var typ1 = x.getField.getType
-        var next = it.next()
-        if (typ1.isInstanceOf[ArrowType.Int]){
-          var id = next.getInt(name)
-
-          x.asInstanceOf[IntVector].setSafe(count, id) //
-          println()
-        } else if (typ1.isInstanceOf[ArrowType.Date]) {
-
-        }
-
+        var o1 = next.getObject(name)
+        writeData(x, o1, count)
+        x.setValueCount(count)
 
       })
-      count += 1
+    }
+    schemaRoot.setRowCount(count)
+    //schemaRoot.close()
+    /////////////////////////////////////
+    //writing to json file just to see the schema
+    
+    val writer = new JsonFileWriter(new File("/home/mi/Desktop/empdata.json"), JsonFileWriter.config.pretty(true))
+    writer.start(schemaRoot.getSchema, null)
+    writer.write(schemaRoot)
+    writer.close()
+    ////////////////////////////////////
+    val fieldVectorsReader = schemaRoot.getFieldVectors
+var count11 = schemaRoot.getRowCount
+    println("####################################: ")
+    var ccc = 0
+    for (ccc <- 0 until count11) {
+      fieldVectorsReader.forEach(x => {
+        var name = x.getField.getName
+        var typ1 = x.getField.getType
+
+        var dcount = x.getValueCount
+        var ddd = 0
+        //for (ddd <- 0 until dcount) {
+          if (typ1.isInstanceOf[ArrowType.Int]) {
+              var rec = x.asInstanceOf[IntVector].getObject(ccc)
+              println(rec.asInstanceOf[Int])
+            } else if (typ1.isInstanceOf[ArrowType.Date]) {
+              var rec = x.asInstanceOf[DateDayVector].getObject(ccc)
+              println(rec.asInstanceOf[Int])
+            } else if (typ1.isInstanceOf[ArrowType.Utf8]) {
+              var rec = x.asInstanceOf[VarCharVector].getObject(ccc)
+              println(rec.asInstanceOf[Text])
+            }
+      })
     }
 
-println()
-
-
-    //    fieldVectors.forEach(x=> {
-//      var typ = x.getField.getFieldType.getType
-//      val vector = getFieldVector(typ, x)
-//      while (it.hasNext) {
-//        var i : Int = 0
-//        for (i <- 0 until columns.size()) {
-//          var data = it.next().getObject(i)
-//          vector.setSafe(, data)
-//        }
-//        println(data)
-//      }
-//    })
-
-
-
-//
-//    val temp:IntVector = fieldVectors.get(0).asInstanceOf[IntVector]
-//    var empnoVector = fieldVectors.get(0).asInstanceOf[IntVector]
-//    println("--------------------")
-//
-//    var vex = schemaRoot.getVector("first_name")
-//    var valueCount = 0
-//    while(it.hasNext) {
-//
-//      var data = it.next().getObject(0)
-//
-//      empnoVector.setSafe(valueCount, data)
-//
-//      valueCount += 1
-//    }
-//
-//    empnoVector.setValueCount(valueCount)
-//
-//    val firstVector = schemaRoot.getFieldVectors.get(0)
-//
-//    var newcount = firstVector.getValueCount
-//    var vc = 0
-//    for (vc <- 0 until newcount) {
-//
-//     var it1 = firstVector.getObject(vc)
-//
-//      println(it1)
-//    }
+    println()
   }
 
   import scala.collection.JavaConverters._
-
   private def fieldx(name: String, nullable: Boolean, typ: ArrowType, children: Field*) = new Field(name, new FieldType(nullable, typ, null, null), children.toList.asJava)
-
   private def field(na: String, typ: ArrowType, chi: Field*) = fieldx(na, true, typ, chi: _*)
-
 }
