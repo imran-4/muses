@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets
 import java.sql.ResultSet
 import java.util
 
+import org.apache.arrow.vector.ipc.{ArrowFileReader, ArrowReader}
+import org.apache.arrow.vector.ipc.message.ArrowRecordBatch
 import org.joda.time.LocalDate
 
 //import de.tuberlin.dima.bdapro.muses.connector.Main1.{field, getArrowType, writeData}
@@ -31,15 +33,17 @@ class Test {
     if (typ.isInstanceOf[ArrowType.Int]) {
       var value = o.asInstanceOf[Int]
       x.asInstanceOf[IntVector].setSafe(count, value)
+      x.setValueCount(count)
     } else if (typ.isInstanceOf[ArrowType.Date]) {
       var value = LocalDate.fromDateFields(o.asInstanceOf[java.util.Date])
       import org.joda.time.format.DateTimeFormat
       val formatter = DateTimeFormat.forPattern("yyyyMMdd")
       val lvalue = value.toString(formatter)
       x.asInstanceOf[DateDayVector].setSafe(count, Integer.parseInt(lvalue).intValue())//count, DateUtility.daysToStandardMillis(value))111
+      x.setValueCount(count)
     } else if (typ.isInstanceOf[ArrowType.Utf8]) {
       var value = o.asInstanceOf[String]
-      x.asInstanceOf[VarCharVector].setSafe(count, value.getBytes(StandardCharsets.UTF_8))
+      x.asInstanceOf[VarCharVector].setSafe(count, value.getBytes, 0, value.getBytes.length)
 //      x.asInstanceOf[VarCharVector].setValueLengthSafe(count, value.getBytes(StandardCharsets.UTF_8).length)
     } else {
       throw new Exception("No corresponding vector")
@@ -65,7 +69,7 @@ class Test {
   private def fieldx(name: String, nullable: Boolean, typ: ArrowType, children: Field*) = new Field(name, new FieldType(nullable, typ, null, null), children.toList.asJava)
   private def field(na: String, typ: ArrowType, chi: Field*) = fieldx(na, true, typ, chi: _*)
 
-  def write(): VectorSchemaRoot = {
+  def write(): (VectorSchemaRoot, RootAllocator) = {
     val (it, columns) = readDatabase()
     import com.google.common.collect.ImmutableList
     var parentBuilder:ImmutableList.Builder[Field] = ImmutableList.builder()
@@ -74,7 +78,7 @@ class Test {
       parentBuilder.add(f)
     })
 
-    var allocator: BufferAllocator = new RootAllocator(AllocationListener.NOOP, Long.MaxValue)
+    var allocator = new RootAllocator(AllocationListener.NOOP, Long.MaxValue)
     import java.util
 
     import org.apache.arrow.vector.FieldVector
@@ -103,17 +107,19 @@ class Test {
         var name = x.getField.getName
         var o1 = it.getObject(name)
         writeData(x, o1, count, allocator)
-        x.setValueCount(count)
+
       })
     }
 //    schemaRoot.setRowCount(count)
     //schemaRoot.close()
 
+
+
     val schemaRoot: VectorSchemaRoot = new VectorSchemaRoot(sch.getFields(), fieldVectors, count)
-    return schemaRoot
+    return (schemaRoot, allocator)
   }
 
-  def read(schemaRoot: VectorSchemaRoot): util.Iterator[ValueVector] = {
+  def read(schemaRoot: VectorSchemaRoot, allocator: RootAllocator): FieldVector = {
     val fieldVectorsReader = schemaRoot.getFieldVectors
     var count11 = schemaRoot.getRowCount
     var ccc = 0
@@ -153,9 +159,10 @@ class Test {
       bw.write(str.toString())
     }
 
-    println(fieldVectorsReader.get(0).getField.getType)
-
-    return fieldVectorsReader.get(0).iterator()
+//    fieldVectorsReader.get(0).
+//    ArrowRecordBatch arr = new ArrowRecordBatch()
+    return fieldVectorsReader.get(0)//.iterator().asInstanceOf[Iterator[Object]]
+//    return fieldVectorsReader.get(0).iterator()
     //    Source.fromIterable(new Iterable () {
     //      fieldVectorsReader.get(0).iterator()
     //    })
@@ -164,14 +171,18 @@ class Test {
 //    bw.close()
   }
 
-  def execute(): util.Iterator[ValueVector] = {
-    return read(write())
+  def execute(): FieldVector = {
+    var (vec, allocator) = write()
+    return read(vec, allocator)
   }
 }
+
 object Main1 {
   def main(args: Array[String]): Unit = {
     val test = new Test()
-    test.read(test.write())
+//    test.read(test.write())
+    var (vec, allocator) = test.write()
+    test.read(vec, allocator)
   }
 }
 
