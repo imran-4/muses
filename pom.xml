@@ -1,277 +1,612 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.tuberlin.dima.bdapro.muses</groupId>
-	<artifactId>muses</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<organization>
-		<name>FG DIMA, TU Berlin</name>
-		<url>http://dima.tu-berlin.de/</url>
-	</organization>
-	<properties>
-		<java.version>1.8</java.version>
-		<scala.version>2.12.6</scala.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<muses.version>${project.version}</muses.version>
-<!-- 	<arrow.version>0.9.0</arrow.version> -->
-		<junit.version>4.11</junit.version>
-	</properties>
-	<modules>
-		<module>muses-netty</module>
-		<module>muses-akka</module>
-		<module>muses-connector</module>
-		<module>muses-commons</module>
-		<module>muses-yarn-client</module>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.tuberlin.dima.bdapro.muses</groupId>
+    <artifactId>muses</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <organization>
+        <name>FG DIMA, TU Berlin</name>
+        <url>http://dima.tu-berlin.de/</url>
+    </organization>
+    <scm>
+        <connection>scm:git:git@github.com:mi-1-0-0/muses.git</connection>
+        <!--<developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/spark.git</developerConnection>-->
+        <url>scm:git:git@github.com:mi-1-0-0/muses.git</url>
+        <tag>HEAD</tag>
+    </scm>
+    <developers>
+        <developer>
+            <id>mi-1-0-0</id>
+            <name>Muhammad Imran</name>
+            <email>muhammad.imran1@protonmail.ch</email>
+            <url>http://google.com</url>
+            <organization>TU Berlin</organization>
+            <organizationUrl>http://www.tu-berlin.de</organizationUrl>
+        </developer>
+    </developers>
+    <properties>
+        <java.version>1.8</java.version>
+        <scala.version>2.12.6</scala.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <muses.version>${project.version}</muses.version>
+        <!-- 	<arrow.version>0.9.0</arrow.version> -->
+        <yarn.version>2.6.5</yarn.version>
+        <junit.version>4.11</junit.version>
 
-		<module>examples</module>
-	</modules>
-	<dependencyManagement>
-		<dependencies>
+        <hadoop.deps.scope>compile</hadoop.deps.scope>
 
-			<!-- <dependency> -->
-			<!-- <groupId>org.eclipse.m2e</groupId> -->
-			<!-- <artifactId>lifecycle-mapping</artifactId> -->
-			<!-- <version>1.0.0</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-shade-plugin</artifactId> -->
-			<!-- <version>3.1.1</version> -->
-			<!-- </dependency> -->
 
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-source-plugin</artifactId> -->
-			<!-- <version>3.0.1</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.scala-lang</groupId> -->
-			<!-- <artifactId>scala-compiler</artifactId> -->
-			<!-- <version>${scala.version}</version> -->
-			<!-- <scope>compile</scope> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>net.alchim31.maven</groupId> -->
-			<!-- <artifactId>scala-maven-plugin</artifactId> -->
-			<!-- <version>3.3.2</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.arrow</groupId> -->
-			<!-- <artifactId>arrow-tools</artifactId> -->
-			<!-- <version>${arrow.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.arrow</groupId> -->
-			<!-- <artifactId>arrow-vector</artifactId> -->
-			<!-- <version>${arrow.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.arrow</groupId> -->
-			<!-- <artifactId>arrow-memory</artifactId> -->
-			<!-- <version>${arrow.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.arrow</groupId> -->
-			<!-- <artifactId>arrow-format</artifactId> -->
-			<!-- <version>${arrow.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.arrow</groupId> -->
-			<!-- <artifactId>arrow-java-root</artifactId> -->
-			<!-- <version>${arrow.version}</version> -->
-			<!-- </dependency> -->
+        <jars.target.dir>${project.build.directory}/muses-${scala.version}/jars</jars.target.dir>
+        <build.copyDependenciesPhase>none</build.copyDependenciesPhase>
+    </properties>
+    <modules>
 
-			<!-- scala -->
+        <module>muses-akka</module>
+        <module>muses-netty</module>
+        <module>muses-connector</module>
+        <module>muses-commons</module>
+        <module>muses-yarn-appmaster</module>
+        <module>muses-yarn-client</module>
+        <module>examples</module>
+    </modules>
+    <dependencyManagement>
+        <dependencies>
 
-			<dependency>
-				<artifactId>scala-library</artifactId>
-				<groupId>org.scala-lang</groupId>
-				<version>${scala.version}</version>
-			</dependency>
+            <!-- <dependency> -->
+            <!-- <groupId>org.eclipse.m2e</groupId> -->
+            <!-- <artifactId>lifecycle-mapping</artifactId> -->
+            <!-- <version>1.0.0</version> -->
+            <!-- </dependency> -->
+            <!-- <dependency> -->
+            <!-- <groupId>org.apache.maven.plugins</groupId> -->
+            <!-- <artifactId>maven-shade-plugin</artifactId> -->
+            <!-- <version>3.1.1</version> -->
+            <!-- </dependency> -->
 
-			<!-- logger -->
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.7.6</version>
-			</dependency>
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>1.2.17</version>
-			</dependency>
+            <!-- <dependency> -->
+            <!-- <groupId>org.apache.maven.plugins</groupId> -->
+            <!-- <artifactId>maven-source-plugin</artifactId> -->
+            <!-- <version>3.0.1</version> -->
+            <!-- </dependency> -->
+            <!-- <dependency> -->
+            <!-- <groupId>org.scala-lang</groupId> -->
+            <!-- <artifactId>scala-compiler</artifactId> -->
+            <!-- <version>${scala.version}</version> -->
+            <!-- <scope>compile</scope> -->
+            <!-- </dependency> -->
+            <!-- <dependency> -->
+            <!-- <groupId>net.alchim31.maven</groupId> -->
+            <!-- <artifactId>scala-maven-plugin</artifactId> -->
+            <!-- <version>3.3.2</version> -->
+            <!-- </dependency> -->
+            <!-- <dependency> -->
+            <!-- <groupId>org.apache.arrow</groupId> -->
+            <!-- <artifactId>arrow-tools</artifactId> -->
+            <!-- <version>${arrow.version}</version> -->
+            <!-- </dependency> -->
+            <!-- <dependency> -->
+            <!-- <groupId>org.apache.arrow</groupId> -->
+            <!-- <artifactId>arrow-vector</artifactId> -->
+            <!-- <version>${arrow.version}</version> -->
+            <!-- </dependency> -->
+            <!-- <dependency> -->
+            <!-- <groupId>org.apache.arrow</groupId> -->
+            <!-- <artifactId>arrow-memory</artifactId> -->
+            <!-- <version>${arrow.version}</version> -->
+            <!-- </dependency> -->
+            <!-- <dependency> -->
+            <!-- <groupId>org.apache.arrow</groupId> -->
+            <!-- <artifactId>arrow-format</artifactId> -->
+            <!-- <version>${arrow.version}</version> -->
+            <!-- </dependency> -->
+            <!-- <dependency> -->
+            <!-- <groupId>org.apache.arrow</groupId> -->
+            <!-- <artifactId>arrow-java-root</artifactId> -->
+            <!-- <version>${arrow.version}</version> -->
+            <!-- </dependency> -->
 
-			<!-- tests -->
-			<dependency>
-				<groupId>org.scalatest</groupId>
-				<artifactId>scalatest_${scala.version}</artifactId>
-				<version>2.2.2</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<artifactId>junit</artifactId>
-				<groupId>junit</groupId>
-				<version>${junit.version}</version>
-				<scope>test</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	<build>
-		<sourceDirectory>src/main/scala</sourceDirectory>
-		<testSourceDirectory>src/test/scala</testSourceDirectory>
+            <!-- scala -->
 
-		<plugins>
-			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.3.2</version>
-				<configuration>
-					<scalaVersion>${scala.version}</scalaVersion>
-					<args>
-						<arg>-optimize</arg>
-						<arg>-target:jvm-1.8</arg>
-					</args>
-				</configuration>
-				<executions>
-					<execution>
-						<id>scala-compile-first</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>add-source</goal>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>scala-test-compile</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-<!-- 					<execution> -->
-<!-- 						<id>attach-sources</id> -->
-<!-- 						<phase>package</phase> -->
-<!-- 						<goals> -->
-<!-- 							<goal>jar-no-fork</goal> -->
-<!-- 						</goals> -->
-<!-- 					</execution> -->
-				</executions>
+            <dependency>
+                <artifactId>scala-library</artifactId>
+                <groupId>org.scala-lang</groupId>
+                <version>${scala.version}</version>
+            </dependency>
 
-			</plugin>
-			<!-- <plugin> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-source-plugin</artifactId> -->
-			<!-- <version>3.0.1</version> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <id>attach-sources</id> -->
-			<!-- <phase>package</phase> -->
-			<!-- <goals> -->
-			<!-- <goal>jar-no-fork</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
-			<!-- <plugin> -->
-			<!-- <groupId>net.alchim31.maven</groupId> -->
-			<!-- <artifactId>scala-maven-plugin</artifactId> -->
-			<!-- <version>3.3.2</version> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <id>scala-compile-first</id> -->
-			<!-- <phase>process-resources</phase> -->
-			<!-- <goals> -->
-			<!-- <goal>add-source</goal> -->
-			<!-- <goal>compile</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- <execution> -->
-			<!-- <id>scala-test-compile</id> -->
-			<!-- <phase>process-test-resources</phase> -->
-			<!-- <goals> -->
-			<!-- <goal>testCompile</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
-			<!-- <plugin> -->
-			<!-- <artifactId>maven-compiler-plugin</artifactId> -->
-			<!-- <version>2.4</version> -->
-			<!-- <configuration> -->
-			<!-- <source>${java.version}</source> -->
-			<!-- <target>${java.version}</target> -->
-			<!-- </configuration> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <phase>compile</phase> -->
-			<!-- <goals> -->
-			<!-- <goal>compile</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
-		</plugins>
-	<resources>
-		<resource>
-			<directory>src/main/scala</directory>
-			<includes>
-				<include>**/*.scala</include>
-			</includes>
-		</resource>
-	</resources>
-	<pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.m2e</groupId>
-				<artifactId>lifecycle-mapping</artifactId>
-				<version>1.0.0</version>
-				<configuration>
-					<lifecycleMappingMetadata>
-						<pluginExecutions>
-							<pluginExecution>
-								<pluginExecutionFilter>
-									<groupId>
-										net.alchim31.maven
-									</groupId>
-									<artifactId>
-										scala-maven-plugin
-									</artifactId>
-									<versionRange>
-										[3.3.2,)
-									</versionRange>
-									<goals>
-										<goal>compile</goal>
-									</goals>
-								</pluginExecutionFilter>
-								<action>
-									<ignore></ignore>
-								</action>
-							</pluginExecution>
-						</pluginExecutions>
-					</lifecycleMappingMetadata>
-				</configuration>
-			</plugin>
-		</plugins>
-	</pluginManagement>
-	</build>
+            <!-- for apache yarn -->
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>3.5.1</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- ========================================== -->
+            <!-- APACHE YARN -->
+
+            <!--<dependency>-->
+                <!--<groupId>org.apache.hadoop</groupId>-->
+                <!--<artifactId>hadoop-yarn-api</artifactId>-->
+                <!--<version>${yarn.version}</version>-->
+                <!--<scope>${hadoop.deps.scope}</scope>-->
+                <!--<exclusions>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>javax.servlet</groupId>-->
+                        <!--<artifactId>servlet-api</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.ow2.asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.jboss.netty</groupId>-->
+                        <!--<artifactId>netty</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>commons-logging</groupId>-->
+                        <!--<artifactId>commons-logging</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.jersey-test-framework</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.contribs</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                <!--</exclusions>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.apache.hadoop</groupId>-->
+                <!--<artifactId>hadoop-yarn-common</artifactId>-->
+                <!--<version>${yarn.version}</version>-->
+                <!--<scope>${hadoop.deps.scope}</scope>-->
+                <!--<exclusions>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.ow2.asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.jboss.netty</groupId>-->
+                        <!--<artifactId>netty</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>javax.servlet</groupId>-->
+                        <!--<artifactId>servlet-api</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>commons-logging</groupId>-->
+                        <!--<artifactId>commons-logging</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.jersey-test-framework</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.contribs</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                <!--</exclusions>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.apache.hadoop</groupId>-->
+                <!--<artifactId>hadoop-yarn-server-tests</artifactId>-->
+                <!--<version>${yarn.version}</version>-->
+                <!--<classifier>tests</classifier>-->
+                <!--<scope>test</scope>-->
+                <!--<exclusions>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.ow2.asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.jboss.netty</groupId>-->
+                        <!--<artifactId>netty</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>javax.servlet</groupId>-->
+                        <!--<artifactId>servlet-api</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>commons-logging</groupId>-->
+                        <!--<artifactId>commons-logging</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.jersey-test-framework</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.contribs</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                <!--</exclusions>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.apache.hadoop</groupId>-->
+                <!--<artifactId>hadoop-yarn-server-web-proxy</artifactId>-->
+                <!--<version>${yarn.version}</version>-->
+                <!--<scope>${hadoop.deps.scope}</scope>-->
+                <!--<exclusions>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.ow2.asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.jboss.netty</groupId>-->
+                        <!--<artifactId>netty</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>javax.servlet</groupId>-->
+                        <!--<artifactId>servlet-api</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>commons-logging</groupId>-->
+                        <!--<artifactId>commons-logging</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.jersey-test-framework</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.contribs</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                <!--</exclusions>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.apache.hadoop</groupId>-->
+                <!--<artifactId>hadoop-yarn-client</artifactId>-->
+                <!--<version>${yarn.version}</version>-->
+                <!--<scope>${hadoop.deps.scope}</scope>-->
+                <!--<exclusions>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.ow2.asm</groupId>-->
+                        <!--<artifactId>asm</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.jboss.netty</groupId>-->
+                        <!--<artifactId>netty</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>javax.servlet</groupId>-->
+                        <!--<artifactId>servlet-api</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>commons-logging</groupId>-->
+                        <!--<artifactId>commons-logging</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.jersey-test-framework</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>com.sun.jersey.contribs</groupId>-->
+                        <!--<artifactId>*</artifactId>-->
+                    <!--</exclusion>-->
+                <!--</exclusions>-->
+            <!--</dependency>-->
+
+
+            <!-- ========================================== -->
+
+            <!-- logger -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.6</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+            </dependency>
+
+            <!-- tests -->
+            <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest_${scala.version}</artifactId>
+                <version>2.2.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <artifactId>junit</artifactId>
+                <groupId>junit</groupId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+            </plugin>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <!-- 3.3.1 won't work with zinc; fails to find javac from java.home -->
+                <version>3.2.2</version>
+                <executions>
+                    <execution>
+                        <id>eclipse-add-source</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <goals>
+                                <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <!--<execution>-->
+                        <!--<id>scala-test-compile-first</id>-->
+                        <!--<goals>-->
+                            <!--<goal>testCompile</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                </executions>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <recompileMode>incremental</recompileMode>
+                    <!--<useZincServer>true</useZincServer>-->
+                    <!--<args>-->
+                        <!--<arg>-unchecked</arg>-->
+                        <!--<arg>-deprecation</arg>-->
+                        <!--<arg>-feature</arg>-->
+                        <!--<arg>-explaintypes</arg>-->
+                        <!--<arg>-Yno-adapted-args</arg>-->
+                    <!--</args>-->
+                    <!--<jvmArgs>-->
+                        <!--<jvmArg>-Xms1024m</jvmArg>-->
+                        <!--<jvmArg>-Xmx1024m</jvmArg>-->
+                        <!--&lt;!&ndash;<jvmArg>-XX:ReservedCodeCacheSize=${CodeCacheSize}</jvmArg>&ndash;&gt;-->
+                    <!--</jvmArgs>-->
+                    <!--<javacArgs>-->
+                        <!--<javacArg>-source</javacArg>-->
+                        <!--<javacArg>${java.version}</javacArg>-->
+                        <!--<javacArg>-target</javacArg>-->
+                        <!--<javacArg>${java.version}</javacArg>-->
+                        <!--<javacArg>-Xlint:all,-serial,-path,-try</javacArg>-->
+                    <!--</javacArgs>-->
+                </configuration>
+            </plugin>
+
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <attach>true</attach>
+                    <!--<source>${java.version}</source>-->
+                    <!--<target>${java.version}</target>-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>create-source-jar</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                            <goal>test-jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+            <!-- <plugin> -->
+            <!-- <groupId>org.apache.maven.plugins</groupId> -->
+            <!-- <artifactId>maven-source-plugin</artifactId> -->
+            <!-- <version>3.0.1</version> -->
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <id>attach-sources</id> -->
+            <!-- <phase>package</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>jar-no-fork</goal> -->
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+            <!-- </plugin> -->
+            <!-- <plugin> -->
+            <!-- <groupId>net.alchim31.maven</groupId> -->
+            <!-- <artifactId>scala-maven-plugin</artifactId> -->
+            <!-- <version>3.3.2</version> -->
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <id>scala-compile-first</id> -->
+            <!-- <phase>process-resources</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>add-source</goal> -->
+            <!-- <goal>compile</goal> -->
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- <execution> -->
+            <!-- <id>scala-test-compile</id> -->
+            <!-- <phase>process-test-resources</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>testCompile</goal> -->
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+            <!-- </plugin> -->
+            <!-- <plugin> -->
+            <!-- <artifactId>maven-compiler-plugin</artifactId> -->
+            <!-- <version>2.4</version> -->
+            <!-- <configuration> -->
+            <!-- <source>${java.version}</source> -->
+            <!-- <target>${java.version}</target> -->
+            <!-- </configuration> -->
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <phase>compile</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>compile</goal> -->
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+            <!-- </plugin> -->
+
+
+            <!-- This plugin dumps the test classpath into a file -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!--<execution>-->
+                        <!--<id>generate-test-classpath</id>-->
+                        <!--<phase>test-compile</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>build-classpath</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<includeScope>test</includeScope>-->
+                            <!--<outputProperty>test_classpath</outputProperty>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                    <execution>
+                        <id>copy-module-dependencies</id>
+                        <phase>${build.copyDependenciesPhase}</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <outputDirectory>${jars.target.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/jars</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/scala</directory>
+                <includes>
+                    <include>**/*.scala</include>
+                </includes>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            net.alchim31.maven
+                                        </groupId>
+                                        <artifactId>
+                                            scala-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [3.3.2,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>compile</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <!--<plugins>-->
+        <!--<plugin>-->
+        <!--<artifactId>maven-dependency-plugin</artifactId>-->
+        <!--<executions>-->
+        <!--<execution>-->
+        <!--<phase>install</phase>-->
+        <!--<goals>-->
+        <!--<goal>copy-dependencies</goal>-->
+        <!--</goals>-->
+        <!--<configuration>-->
+        <!--<outputDirectory>${project.build.directory}/jars</outputDirectory>-->
+        <!--</configuration>-->
+        <!--</execution>-->
+        <!--</executions>-->
+        <!--</plugin>-->
+        <!--</plugins>-->
+
+    </build>
 </project>

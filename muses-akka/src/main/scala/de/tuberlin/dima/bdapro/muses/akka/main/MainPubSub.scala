@@ -1,47 +1,111 @@
 package de.tuberlin.dima.bdapro.muses.akka.main
 
-import java.nio.file.Paths
-import java.util.concurrent.TimeUnit
+import java.io.ObjectOutputStream
 
-import scala.concurrent.duration._
-import akka.NotUsed
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorSystem, Deploy, Props}
 import akka.cluster.Cluster
-import akka.routing.RoundRobinPool
-import akka.stream.{ActorMaterializer, OverflowStrategy, ThrottleMode}
-import akka.stream.scaladsl.{FileIO, Flow, Framing, Keep, RunnableGraph, Sink, Source}
-import akka.util.ByteString
+import akka.remote.serialization.ProtobufSerializer
+import akka.stream.ActorMaterializer
+import com.google.flatbuffers.FlatBufferBuilder
+import de.tuberlin.dima.bdapro.muses.connector.Test
+import org.apache.arrow.memory.{AllocationListener, RootAllocator}
+import org.apache.arrow.vector.IntVector
+import org.apache.arrow.vector.ipc.message.ArrowMessage.ArrowMessageVisitor
+import org.apache.arrow.vector.ipc.message.{ArrowRecordBatch, MessageSerializer}
 
 import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 
-object MainPubSub {
+object MainPubSub //extends AkkaSpec with CompileOnlySpec
+{
   def main(args: Array[String]): Unit = {
-    val systemName = "MusesCluster"
+    val systemName = "MusesCluster1"
+
     implicit val system1 = ActorSystem(systemName)
     implicit val materializer = ActorMaterializer()
     val joinAddress = Cluster(system1).selfAddress
     Cluster(system1).join(joinAddress)
-    val publisher = system1.actorOf(Props[Publisher], "publisher")
-
-//    implicit val system0 = ActorSystem(systemName)
-//    Cluster(system0).join(joinAddress)
-//    val subscriber0 = system0.actorOf(Props[Subscriber], "subscriber")
-//    Thread.sleep(5000)
-
+    println(">>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<")
+    val publisher = system1.actorOf(Props[Publisher].withDeploy(Deploy.local), "publisher")
     Thread.sleep(5000)
     implicit val system2 = ActorSystem(systemName)
     Cluster(system2).join(joinAddress)
-    val subscriber = system2.actorOf(Props[Subscriber], "subscriber")
+    val subscriber = system2.actorOf(Props[Subscriber].withDeploy(Deploy.local), "subscriber")
     Thread.sleep(5000)
+    /*******************/
+    sys.addShutdownHook({
+      println("Terminating...")
+      system1.terminate()
+      Await.result(system1.whenTerminated, 120 seconds)
+      println("Terminated... Bye")
+      println(System.currentTimeMillis())
+    })
+    sys.addShutdownHook({
+      println("Terminating...")
+      system2.terminate()
+      Await.result(system2.whenTerminated, 120 seconds)
+      println("Terminated... Bye")
+      println(System.currentTimeMillis())
+    })
+//    /*******************/
 
-    def files = new java.io.File("/home/mi/test/").listFiles().map(_.getAbsolutePath).to[scala.collection.immutable.Iterable]
-    val source = Source(files).flatMapConcat(filename => FileIO.fromPath(Paths.get(filename)))
-    val flow = Framing.delimiter(ByteString("\n"), 256, allowTruncation = true)
+//    var args: String = "pub"
+//    val systemName = "MusesCluster"
+//    var joinAddress = null
+//    if (args == "pub") {
+//
+//      implicit val system1 = ActorSystem(systemName)
+//      implicit val materializer = ActorMaterializer()
+//      val publisher = system1.actorOf(Props[Publisher], "publisher")
+//
 
-    source.map(x => {
-      publisher ! x.utf8String
-    }).to(Sink.ignore).run()
+
+    ////////////////////////////////////////////////
+
+
+
+
+    //////////////////////////////////////////////////
+    var test = new Test()
+    var batch = test.execute()
+    import java.io.ByteArrayOutputStream
+    import java.nio.channels.Channels
+
+    import org.apache.arrow.vector.ipc.WriteChannel
+    val out = new ByteArrayOutputStream
+
+
+    var channel = new WriteChannel(Channels.newChannel(out))
+    var block = MessageSerializer.serialize(channel, batch)
+
+
+//    var ser: ProtobufSerializer = new ProtobufSerializer()
+//    ser.toBinary(batch)
+
+
+
+    println()
+    publisher ! out.toByteArray
+
+
+
+    //    } else {
+//
+//      implicit val system2 = ActorSystem(systemName)
+//      implicit val materializer = ActorMaterializer()
+//      val subscriber = system2.actorOf(Props[Subscriber], "subscriber")
+//
+//    }
+
+
+    /*********************************************************************************/
+    //================================================================================
+
+//    //////?????????????
+//    val roundRobinPool = RoundRobinPool(nrOfInstances = 2)
+//    val router  = system1.actorOf(roundRobinPool.props(Props[Publisher]))
+//    (1 to 100).foreach(i => router ! i)
+
 
     //val sink = FileIO.toPath(Paths.get("out155.txt"))
 //    val t: RunnableGraph[NotUsed] = source.via(flow).to(Sink.ignore)
@@ -101,5 +165,7 @@ object MainPubSub {
 //    Source.actorRef()
 
 
+//    system1.terminate()
+//    system2.terminate()
   }
 }

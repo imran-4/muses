@@ -9,9 +9,10 @@
 	</parent>
 	<artifactId>muses-connector</artifactId>
 	<packaging>pom</packaging>
+
 	<modules>
-		<module>file-connector</module>
 		<module>rdbms-connector</module>
+		<module>file-connector</module>
 		<module>arrow-manager</module>
 	</modules>
 
@@ -52,11 +53,11 @@
 			<artifactId>arrow-format</artifactId>
 			<version>${arrow.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.arrow</groupId>
-			<artifactId>arrow-java-root</artifactId>
-			<version>${arrow.version}</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.apache.arrow</groupId>-->
+			<!--<artifactId>arrow-java-root</artifactId>-->
+			<!--<version>${arrow.version}</version>-->
+		<!--</dependency>-->
 
 		<dependency>
 			<groupId>mysql</groupId>
