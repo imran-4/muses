@@ -3,186 +3,161 @@ package de.tuberlin.dima.bdapro.muses.connector.arrow.writer
 import java.math.BigDecimal
 import java.nio.charset.Charset
 
-import de.tuberlin.dima.bdapro.muses.connector._
 import org.apache.arrow.vector._
+import org.apache.arrow.vector.types.pojo.ArrowType
+import org.joda.time.LocalDate
+import org.joda.time.format.DateTimeFormat
 
 
-class ArrowWriter extends Writer {
+object ArrowWriter {
 
-  override def write(vector: ValueVector, valueCount: Int, values: Array[Object]): Unit = {
+  //  val allocator = new RootAllocator(Integer.MAX_VALUE)
+  //
+  //  //getter
+  //  def getAllocator(): RootAllocator = allocator
+  //
+  //  def writeComplex(parentName: String, writerName: String, columnsNameAndTypes: List[Tuple2[String, String]]): Unit = {
+  //    val parent = NonNullableStructVector.empty(parentName, allocator)
+  //    val writer = new ComplexWriterImpl(writerName, parent)
+  //    val rootWriter = writer.rootAsStruct
+  //
+  //    //////////////////???????????????????????????????????????
+  //    columnsNameAndTypes.foreach(x => {
+  //      if (x._2 == "INT") {
+  //        var columnWriter = rootWriter.bigInt(x._1)
+  //      }
+  //    })
 
+  //  }
+  def writeFieldVector(fieldVector: FieldVector, obj: Object, index: Int): Unit = {
+    var fieldVectorValuesType = fieldVector.getField.getType
+    if (fieldVectorValuesType.isInstanceOf[ArrowType.Int]) {
+      ArrowWriter.writeIntData(fieldVector.asInstanceOf[IntVector], index, obj.asInstanceOf[Int])
+    } else if (fieldVectorValuesType.isInstanceOf[ArrowType.Date]) {
+      ArrowWriter.writeDateDayData(fieldVector.asInstanceOf[DateDayVector], index, obj.asInstanceOf[java.util.Date])
+    } else if (fieldVectorValuesType.isInstanceOf[ArrowType.Utf8]) {
+      ArrowWriter.writeVarCharData(fieldVector.asInstanceOf[VarCharVector], index, obj.toString)
+    } else {
+      throw new Exception("No corresponding vector available so far.")
+    }
   }
 
   //NOTE: Keep in mind that there are different variants of setSafe() for each data type. may be we need to call those based on certain condition(s)
 
-  private def writeTimeStampData(vector: TimeStampVector, valueCount: Int, values: Array[Int]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeTimeStampData(vector: TimeStampVector, index: Int, value: Long): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeDecimalData(vector: DecimalVector, valueCount: Int, values: Array[BigDecimal]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeDecimalData(vector: DecimalVector, index: Int, value: BigDecimal): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeIntData(vector: IntVector, valueCount: Int, values: Array[Int]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeIntData(vector: IntVector, index: Int, value: Int): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeBitData(vector: BitVector, valueCount: Int, values: Array[Boolean]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, if (values(i)) 1 else 0)
-    }
-    vector.setValueCount(valueCount)
+  def writeBitData(vector: BitVector, index: Int, value: Boolean): Unit = {
+    vector.setSafe(index, if (value) 1 else 0)
+    vector.setValueCount(index)
   }
 
-  private def writeIntervalYearData(vector: IntervalYearVector, valueCount: Int, values: Array[Int]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeIntervalYearData(vector: IntervalYearVector, index: Int, value: Int): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeIntervalDayData(vector: IntervalDayVector, valueCount: Int, values: Array[Int]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i), 100) //third argument is milliseconds
-    }
-    vector.setValueCount(valueCount)
+  def writeIntervalDayData(vector: IntervalDayVector, index: Int, value: Int): Unit = {
+    vector.setSafe(index, value, 100) //third argument is milliseconds
+    vector.setValueCount(index)
   }
 
-  private def writeTimeSecData(vector: TimeSecVector, valueCount: Int, values: Array[Int]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeTimeSecData(vector: TimeSecVector, index: Int, value: Int): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeTimeMilliData(vector: TimeMilliVector, valueCount: Int, values: Array[Int]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeTimeMilliData(vector: TimeMilliVector, index: Int, value: Int): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeTimeMicroData(vector: TimeMicroVector, valueCount: Int, values: Array[Long]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeTimeMicroData(vector: TimeMicroVector, index: Int, value: Long): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeTimeNanoData(vector: TimeNanoVector, valueCount: Int, values: Array[Long]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeTimeNanoData(vector: TimeNanoVector, index: Int, value: Long): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeDateDayData(vector: DateDayVector, valueCount: Int, values: Array[Int]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeDateDayData(vector: DateDayVector, index: Int, value: java.util.Date): Unit = {
+    var localDate = LocalDate.fromDateFields(value)
+    val formatter = DateTimeFormat.forPattern("yyyyMMdd")
+    val lvalue = localDate.toString(formatter)
+    vector.asInstanceOf[DateDayVector].setSafe(index, Integer.parseInt(lvalue).intValue())
+    vector.setValueCount(index)
   }
 
-  private def writeDateMilliData(vector: DateMilliVector, valueCount: Int, values: Array[Long]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeDateMilliData(vector: DateMilliVector, index: Int, value: Long): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeSmallIntData(vector: SmallIntVector, valueCount: Int, values: Array[Int]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeSmallIntData(vector: SmallIntVector, index: Int, value: Int): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeTinyIntData(vector: TinyIntVector, valueCount: Int, values: Array[Int]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeTinyIntData(vector: TinyIntVector, index: Int, value: Int): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeBigIntData(vector: BigIntVector, valueCount: Int, values: Array[Long]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeBigIntData(vector: BigIntVector, index: Int, value: Long): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeFloatData(vector: Float4Vector, valueCount: Int, values: Array[Float]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeFloatData(vector: Float4Vector, index: Int, value: Float): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeDoubleData(vector: Float8Vector, valueCount: Int, values: Array[Double]): Unit = {
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i))
-    }
-    vector.setValueCount(valueCount)
+  def writeDoubleData(vector: Float8Vector, index: Int, value: Double): Unit = {
+    vector.setSafe(index, value)
+    vector.setValueCount(index)
   }
 
-  private def writeVarBinaryData(vector: VarBinaryVector, valueCount: Int, values: Array[String]): Unit = {
+  def writeVarBinaryData(vector: VarBinaryVector, index: Int, value: String): Unit = {
     val utf8Charset = Charset.forName("UTF-8")
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i).getBytes(utf8Charset))
-    }
-    vector.setValueCount(valueCount)
+    vector.setSafe(index, value.getBytes(utf8Charset))
+    vector.setValueCount(index)
   }
 
-  private def writeVarCharData(vector: VarCharVector, valueCount: Int, values: Array[String]): Unit = {
+  def writeVarCharData(vector: VarCharVector, index: Int, value: String): Unit = {
     val utf8Charset = Charset.forName("UTF-8")
-    var i = 0
-    for (i <- 0 until valueCount) {
-      vector.setSafe(i, values(i).getBytes(utf8Charset))
-    }
-    vector.setValueCount(valueCount)
+    val bytes = value.getBytes(utf8Charset)
+    vector.setSafe(index, bytes, 0, bytes.length)
   }
 
   //write also for complex data, dictionary, struct, list
 
   //following are not implemented yet, check if there is alternative available in the already implemented functions
-  //  private def writeFixedSizeBinaryData(): Unit = {}
-  //  private def writeTimeStampMicroTZData(): Unit = {}
-  //  private def writeTimeStampMicroData(): Unit = {}
-  //  private def writeTimeStampMilliTZData(): Unit = {}
-  //  private def writeTimeStampMilliData(): Unit = {}
-  //  private def writeTimeStampNanoTZData(): Unit = {}
-  //  private def writeTimeStampNanoData(): Unit = {}
-  //  private def writeTimeStampSecTZData(): Unit = {}
-  //  private def writeTimeStampSecData(): Unit = {}
-  //  private def writeUInt1Data(): Unit = {}
-  //  private def writeUInt2Data(): Unit = {}
-  //  private def writeUInt4Data(): Unit = {}
-  //  private def writeUInt8Data(): Unit = {}
+  //  def writeFixedSizeBinaryData(): Unit = {}
+  //  def writeTimeStampMicroTZData(): Unit = {}
+  //  def writeTimeStampMicroData(): Unit = {}
+  //  def writeTimeStampMilliTZData(): Unit = {}
+  //  def writeTimeStampMilliData(): Unit = {}
+  //  def writeTimeStampNanoTZData(): Unit = {}
+  //  def writeTimeStampNanoData(): Unit = {}
+  //  def writeTimeStampSecTZData(): Unit = {}
+  //  def writeTimeStampSecData(): Unit = {}
+  //  def writeUInt1Data(): Unit = {}
+  //  def writeUInt2Data(): Unit = {}
+  //  def writeUInt4Data(): Unit = {}
+  //  def writeUInt8Data(): Unit = {}
 }
