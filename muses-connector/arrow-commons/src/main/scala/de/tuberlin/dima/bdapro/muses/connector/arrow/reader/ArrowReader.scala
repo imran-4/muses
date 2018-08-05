@@ -5,11 +5,15 @@ import java.util._
 import de.tuberlin.dima.bdapro.muses.connector._
 import org.apache.arrow.vector._
 
-class ArrowReader extends Reader {
+class ArrowReader {
 
-  override def read(vector: ValueVector): List[Object] = {
-    return new ArrayList[Object]()
-  }
+//  override def read(vector: ValueVector): List[Object] = {
+//
+//    //do casting/uncasting here...
+//
+//    var values: List[Object] = readData(vector)
+//    return values
+//  }
 
   private def readTimeStampData(vector: TimeStampVector): List[Object] = {
     var i = 0
@@ -203,6 +207,4 @@ class ArrowReader extends Reader {
     }
     return values
   }
-
-
 }
