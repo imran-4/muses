@@ -5,7 +5,7 @@ import java.sql.ResultSet
 import java.util
 
 import com.google.common.collect.ImmutableList
-import de.tuberlin.dima.bdapro.muses.connector.arrow.writer.ArrowWriter
+import de.tuberlin.dima.bdapro.muses.connector.arrow.writer.{ArrowVectorsWriter, ArrowWriter}
 import de.tuberlin.dima.bdapro.muses.connector.rdbms.connectionmanager.JDBCDriversInfo
 import de.tuberlin.dima.bdapro.muses.connector.rdbms.reader.DataReader
 import org.apache.arrow.memory.{AllocationListener, RootAllocator}
@@ -61,7 +61,7 @@ class Test {
       fieldVectors.forEach(x => {
         var name = x.getField.getName
         var o1 = it.getObject(name)
-        ArrowWriter.writeFieldVector(x, o1, count)
+        ArrowVectorsWriter.writeFieldVector(x, o1, count)
       })
     }
     //    schemaRoot.setRowCount(count)

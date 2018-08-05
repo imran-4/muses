@@ -9,7 +9,7 @@ import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 
 
-object ArrowWriter {
+object ArrowVectorsWriter {
 
   //  val allocator = new RootAllocator(Integer.MAX_VALUE)
   //
@@ -30,13 +30,15 @@ object ArrowWriter {
 
   //  }
   def writeFieldVector(fieldVector: FieldVector, obj: Object, index: Int): Unit = {
+    //TODO: Implements for other types as well
     var fieldVectorValuesType = fieldVector.getField.getType
+
     if (fieldVectorValuesType.isInstanceOf[ArrowType.Int]) {
-      ArrowWriter.writeIntData(fieldVector.asInstanceOf[IntVector], index, obj.asInstanceOf[Int])
+      ArrowVectorsWriter.writeIntData(fieldVector.asInstanceOf[IntVector], index, obj.asInstanceOf[Int])
     } else if (fieldVectorValuesType.isInstanceOf[ArrowType.Date]) {
-      ArrowWriter.writeDateDayData(fieldVector.asInstanceOf[DateDayVector], index, obj.asInstanceOf[java.util.Date])
+      ArrowVectorsWriter.writeDateDayData(fieldVector.asInstanceOf[DateDayVector], index, obj.asInstanceOf[java.util.Date])
     } else if (fieldVectorValuesType.isInstanceOf[ArrowType.Utf8]) {
-      ArrowWriter.writeVarCharData(fieldVector.asInstanceOf[VarCharVector], index, obj.toString)
+      ArrowVectorsWriter.writeVarCharData(fieldVector.asInstanceOf[VarCharVector], index, obj.toString)
     } else {
       throw new Exception("No corresponding vector available so far.")
     }
