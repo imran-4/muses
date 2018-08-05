@@ -17,21 +17,6 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 
 class Test {
-  //
-  //  def writeData(x: FieldVector, o: Object, count: Int) : Unit = {
-  //    var typ = x.getField.getType
-  //    if (typ.isInstanceOf[ArrowType.Int]) {
-  //      var value = o.asInstanceOf[Int]
-  //      ArrowWriter.writeIntData(x.asInstanceOf[IntVector], count, value)
-  //    } else if (typ.isInstanceOf[ArrowType.Date]) {
-  //      ArrowWriter.writeDateDayData(x.asInstanceOf[DateDayVector], count, o.asInstanceOf[java.util.Date])
-  //    } else if (typ.isInstanceOf[ArrowType.Utf8]) {
-  //      ArrowWriter.writeVarCharData(x.asInstanceOf[VarCharVector], count, o.toString)
-  //    } else {
-  //      throw new Exception("No corresponding vector available so far.")
-  //    }
-  //  }
-
   def readDatabase(): (ResultSet, util.ArrayList[(String, String)]) = {
     val driver = JDBCDriversInfo.MYSQL_DRIVER
     val url = "jdbc:mysql://localhost/employees?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
@@ -125,9 +110,7 @@ class Test {
       println(str.toString())
       bw.write(str.toString())
     }
-
     return schemaRoot
-
   }
 
   def execute(): ArrowRecordBatch = {
@@ -181,7 +164,6 @@ object Main1 {
     var (vec, allocator) = test.write()
     var schemaRoot = test.read(vec, allocator)
 
-
     //for main2:  https://github.com/apache/arrow/blob/78152f113cf2a29b4c78b1c87d88a99fa4e92a29/java/vector/src/test/java/org/apache/arrow/vector/TestVectorUnloadLoad.java
 
 
@@ -221,7 +203,6 @@ object Main1 {
     //      }
     //    }
 
-
     var schema = schemaRoot.getSchema
     val vectorUnloader = new VectorUnloader(schemaRoot)
 
@@ -230,7 +211,5 @@ object Main1 {
     println("RECORD BARCH LENGTH: " + recordBatch.getLength)
 
     print("++++++++++++++++  " + recordBatch.getNodes.get(0).toString)
-
-
   }
 }

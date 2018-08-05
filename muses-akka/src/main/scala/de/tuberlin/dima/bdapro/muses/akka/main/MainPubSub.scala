@@ -6,6 +6,8 @@ import java.nio.channels.Channels
 import akka.actor.{ActorSystem, Deploy, Props}
 import akka.cluster.Cluster
 import akka.stream.ActorMaterializer
+import de.tuberlin.dima.bdapro.muses.akka.publisher.Publisher
+import de.tuberlin.dima.bdapro.muses.akka.subscriber.Subscriber
 import de.tuberlin.dima.bdapro.muses.connector.Test
 import org.apache.arrow.vector.ipc.WriteChannel
 import org.apache.arrow.vector.ipc.message.MessageSerializer

@@ -1,4 +1,5 @@
-package de.tuberlin.dima.bdapro.muses.akka.main
+package de.tuberlin.dima.bdapro.muses.akka.publisher
+
 
 import java.io.ByteArrayOutputStream
 

@@ -11,9 +11,9 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>rdbms-connector</module>
-		<module>file-connector</module>
-		<module>arrow-manager</module>
+		<module>rdbms-rw</module>
+		<module>file-rw</module>
+		<module>arrow-commons</module>
 	</modules>
 
 	<properties>

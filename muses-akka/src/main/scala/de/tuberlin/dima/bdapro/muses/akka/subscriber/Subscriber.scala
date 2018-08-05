@@ -1,9 +1,11 @@
-package de.tuberlin.dima.bdapro.muses.akka.main
+package de.tuberlin.dima.bdapro.muses.akka.subscriber
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.nio.channels.Channels
+
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.{DistributedPubSub, DistributedPubSubMediator}
+import akka.stream.actor.ActorSubscriberMessage.OnComplete
 import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.vector.IntVector
 import org.apache.arrow.vector.ipc.ReadChannel
@@ -13,8 +15,7 @@ class Subscriber extends Actor with ActorLogging {
   import DistributedPubSubMediator.{Subscribe, SubscribeAck}
   val distributedPubSub = DistributedPubSub(context.system)
   val mediator = distributedPubSub.mediator
-  mediator ! Subscribe.apply("content", self)
-
+  mediator ! Subscribe("content", self)
   def receive = {
     case in: String => {
       log.info("Received String: {}", in)
@@ -40,25 +41,27 @@ class Subscriber extends Actor with ActorLogging {
       println("Deserialized Class: {}", deserialized.getClass)
       var recordBatch = deserialized.asInstanceOf[ArrowRecordBatch]
       println("RecordBatch: {}", recordBatch.toString)
-
-//      val finalVectorsAllocator = alloc.newChildAllocator("final vectors", 0, Integer.MAX_VALUE)
-//      val newRoot = VectorSchemaRoot.create(schema, finalVectorsAllocator)
-//              val vectorLoader = new VectorLoader(newRoot)
-//              vectorLoader.load(recordBatch)
-//              val intReader = newRoot.getVector("emp_no").getReader
-//              //        val bigIntReader = newRoot.getVector("bigInt").getReader
-//              var i = 0
-//              var count = 20
-//              while (i < count) {
-//                intReader.setPosition(i)
-//                println(intReader.readInteger().intValue())
-//                i += 1
-//              }
+      //      val finalVectorsAllocator = alloc.newChildAllocator("final vectors", 0, Integer.MAX_VALUE)
+      //      val newRoot = VectorSchemaRoot.create(schema, finalVectorsAllocator)
+      //              val vectorLoader = new VectorLoader(newRoot)
+      //              vectorLoader.load(recordBatch)
+      //              val intReader = newRoot.getVector("emp_no").getReader
+      //              //        val bigIntReader = newRoot.getVector("bigInt").getReader
+      //              var i = 0
+      //              var count = 20
+      //              while (i < count) {
+      //                intReader.setPosition(i)
+      //                println(intReader.readInteger().intValue())
+      //                i += 1
+      //              }
     }
     case in: ArrowBlock => {
       log.info("Received ArrowBlock: {}", in.toString)
     }
     case SubscribeAck(Subscribe("content", None, `self`)) =>
-      log.info("subscribing")
+      log.info("SubscribeAck: Subscription has been acknowledged.")
+    case OnComplete =>
+      log.info("Consumption of the data has been completed!")
+      context.stop(self)
   }
 }

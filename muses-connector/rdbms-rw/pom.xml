@@ -4,7 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-
+    <properties>
+        <MYSQL_CONNECTOR_VERSION>6.0.6</MYSQL_CONNECTOR_VERSION>
+    </properties>
     <parent>
         <groupId>de.tuberlin.dima.bdapro.muses</groupId>
         <artifactId>muses-connector</artifactId>
@@ -15,7 +17,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>6.0.6</version>
+            <version>${MYSQL_CONNECTOR_VERSION}</version>
         </dependency>
     </dependencies>
 
