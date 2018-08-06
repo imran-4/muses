@@ -15,7 +15,7 @@ class ArrowReader {
 //    return values
 //  }
 
-  private def readTimeStampData(vector: TimeStampVector): List[Object] = {
+  def readTimeStampData(vector: TimeStampVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -26,7 +26,7 @@ class ArrowReader {
     return values
   }
 
-  private def readDecimalData(vector: DecimalVector): List[Object] = {
+  def readDecimalData(vector: DecimalVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -36,7 +36,7 @@ class ArrowReader {
     return values
   }
 
-  private def readIntData(vector: IntVector): List[Object] = {
+  def readIntData(vector: IntVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -46,7 +46,7 @@ class ArrowReader {
     return values
   }
 
-  private def readBitData(vector: BitVector): List[Object] = {
+  def readBitData(vector: BitVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -56,7 +56,7 @@ class ArrowReader {
     return values
   }
 
-  private def readIntervalYearData(vector: IntervalYearVector): List[Object] = {
+  def readIntervalYearData(vector: IntervalYearVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -66,7 +66,7 @@ class ArrowReader {
     return values
   }
 
-  private def readIntervalDayData(vector: IntervalDayVector): List[Object] = {
+  def readIntervalDayData(vector: IntervalDayVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -76,7 +76,7 @@ class ArrowReader {
     return values
   }
 
-  private def readTimeSecData(vector: TimeSecVector): List[Object] = {
+  def readTimeSecData(vector: TimeSecVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -86,7 +86,7 @@ class ArrowReader {
     return values
   }
 
-  private def readTimeMilliData(vector: TimeMilliVector): List[Object] = {
+  def readTimeMilliData(vector: TimeMilliVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -96,7 +96,7 @@ class ArrowReader {
     return values
   }
 
-  private def readTimeMicroData(vector: TimeMicroVector): List[Object] = {
+  def readTimeMicroData(vector: TimeMicroVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -106,7 +106,7 @@ class ArrowReader {
     return values
   }
 
-  private def readTimeNanoData(vector: TimeNanoVector): List[Object] = {
+  def readTimeNanoData(vector: TimeNanoVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -116,7 +116,7 @@ class ArrowReader {
     return values
   }
 
-  private def readDateDayData(vector: DateDayVector): List[Object] = {
+  def readDateDayData(vector: DateDayVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -126,7 +126,7 @@ class ArrowReader {
     return values
   }
 
-  private def readDateMilliData(vector: DateMilliVector): List[Object] = {
+  def readDateMilliData(vector: DateMilliVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -136,7 +136,7 @@ class ArrowReader {
     return values
   }
 
-  private def readSmallIntData(vector: SmallIntVector): List[Object] = {
+  def readSmallIntData(vector: SmallIntVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -146,7 +146,7 @@ class ArrowReader {
     return values
   }
 
-  private def readTinyIntData(vector: TinyIntVector): List[Object] = {
+  def readTinyIntData(vector: TinyIntVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -156,7 +156,7 @@ class ArrowReader {
     return values
   }
 
-  private def readBigIntData(vector: BigIntVector): List[Object] = {
+  def readBigIntData(vector: BigIntVector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -166,7 +166,7 @@ class ArrowReader {
     return values
   }
 
-  private def readFloatData(vector: Float4Vector): List[Object] = {
+  def readFloatData(vector: Float4Vector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -176,7 +176,7 @@ class ArrowReader {
     return values
   }
 
-  private def readDoubleData(vector: Float8Vector): List[Object] = {
+  def readDoubleData(vector: Float8Vector): List[Object] = {
     var i = 0
     val valueCount = vector.getValueCount
     var values: List[Object] = new ArrayList[Object]
@@ -186,7 +186,7 @@ class ArrowReader {
     return values
   }
 
-  private def readVarBinaryData(vector: VarBinaryVector): List[Object] = {
+  def readVarBinaryData(vector: VarBinaryVector): List[Object] = {
     //val utf8Charset = Charset.forName("UTF-8")
     var i = 0
     val valueCount = vector.getValueCount
@@ -197,7 +197,7 @@ class ArrowReader {
     return values
   }
 
-  private def readVarCharData(vector: VarCharVector): List[Object] = {
+  def readVarCharData(vector: VarCharVector): List[Object] = {
     //val utf8Charset = Charset.forName("UTF-8")
     var i = 0
     val valueCount = vector.getValueCount

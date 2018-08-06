@@ -1,6 +1,7 @@
 package de.tuberlin.dima.bdapro.muses.connector
 
 import java.io._
+import java.nio.channels.Channels
 import java.sql.ResultSet
 import java.util
 
@@ -8,8 +9,9 @@ import com.google.common.collect.ImmutableList
 import de.tuberlin.dima.bdapro.muses.connector.arrow.writer.{ArrowVectorsWriter, ArrowWriter}
 import de.tuberlin.dima.bdapro.muses.connector.rdbms.connectionmanager.JDBCDriversInfo
 import de.tuberlin.dima.bdapro.muses.connector.rdbms.reader.DataReader
-import org.apache.arrow.memory.{AllocationListener, RootAllocator}
-import org.apache.arrow.vector.ipc.message.ArrowRecordBatch
+import org.apache.arrow.memory.{AllocationListener, BufferAllocator, RootAllocator}
+import org.apache.arrow.vector.ipc.{ReadChannel, WriteChannel}
+import org.apache.arrow.vector.ipc.message.{ArrowRecordBatch, MessageSerializer}
 import org.apache.arrow.vector.types.pojo._
 import org.apache.arrow.vector.{FieldVector, _}
 
@@ -113,20 +115,20 @@ class Test {
     return schemaRoot
   }
 
-  def execute(): ArrowRecordBatch = {
+  def execute(): (ArrowRecordBatch, String) = {
     var (vec, allocator) = write()
     var schemaRoot = read(vec, allocator)
 
     var schema = schemaRoot.getSchema
+
+    println("SSSSSSSSCCCCCHEEEMMAAAAA: " + schema.toJson)
     val vectorUnloader = new VectorUnloader(schemaRoot)
 
     val recordBatch = vectorUnloader.getRecordBatch
-
     println("RECORD BARCH LENGTH: " + recordBatch.getLength)
-
     print("++++++++++++++++  " + recordBatch.getNodes.get(0).toString)
+    return (recordBatch, schema.toJson)
 
-    return recordBatch
     //    try {
     //      val recordBatch = vectorUnloader.getRecordBatch
     //
@@ -158,25 +160,77 @@ class Test {
 }
 
 object Main1 {
+
   def main(args: Array[String]): Unit = {
-    val test = new Test()
-    //    test.read(test.write())
-    var (vec, allocator) = test.write()
-    var schemaRoot = test.read(vec, allocator)
+    var t = new Test
+    var (vec, allocator) = t.write()
+    var schemaRoot = t.read(vec, allocator)
 
-    //for main2:  https://github.com/apache/arrow/blob/78152f113cf2a29b4c78b1c87d88a99fa4e92a29/java/vector/src/test/java/org/apache/arrow/vector/TestVectorUnloadLoad.java
+    var schema = schemaRoot.getSchema
+    val vectorUnloader = new VectorUnloader(schemaRoot)
+
+    val recordBatch = vectorUnloader.getRecordBatch
+    println("RECORD BARCH LENGTH: " + recordBatch.getLength)
+    print("++++++++++++++++  " + recordBatch.getNodes.get(0).toString)
+//    return recordBatch
+
+    //.*********************************
 
 
-    //    import org.apache.arrow.vector.FieldVector
-    //    import org.apache.arrow.vector.VectorLoader
-    //    import org.apache.arrow.vector.VectorSchemaRoot
-    //    import org.apache.arrow.vector.VectorUnloader
-    //    import org.apache.arrow.vector.complex.reader.FieldReader
-    //    import org.apache.arrow.vector.ipc.message.ArrowRecordBatch
-    //val root = parent.getChild("root")
+    //...........................**********************************
+    val outSchema = new ByteArrayOutputStream
+    var channelSchema = new WriteChannel(Channels.newChannel(outSchema))
+    var blockSchema = MessageSerializer.serialize(channelSchema, schema)
+    println("Starting to publish...")
+    val outBatch = new ByteArrayOutputStream
+    var channelBatch = new WriteChannel(Channels.newChannel(outBatch))
+    var blockBatch = MessageSerializer.serialize(channelSchema, recordBatch)
 
-    //    var schema = schemaRoot.getSchema
-    //    val vectorUnloader = new VectorUnloader(schemaRoot)
+
+    println("***********************************************************")
+    println("***********************************************************")
+    var newAllocator:BufferAllocator = new RootAllocator(Long.MaxValue)
+    val newSchemaRoot = VectorSchemaRoot.create(schema, newAllocator)
+
+
+
+//    val inputStream = new ByteArrayInputStream(outBatch.toByteArray)
+//    val channelIn = new ReadChannel(Channels.newChannel(inputStream))
+//    val deserialized = MessageSerializer.deserializeMessageBatch(channelIn, newAllocator)
+//    println("Deserialized Class: {}", deserialized.getClass)
+//    var recordBatchIn = deserialized.asInstanceOf[ArrowRecordBatch]
+//    newSchemaRoot.setRowCount(recordBatchIn.getLength)
+//    newSchemaRoot.getFieldVectors.forEach(x => {
+//      println("HELLLLLLLLLLLOOOOOOOOOOOOOOOOO>>>>>>>>>>>>>>>>>" + x.toString)
+//    })
+
+//
+//    var loader = new VectorLoader(newSchemaRoot)
+//    loader.load(recordBatch)
+
+          val finalVectorsAllocator = allocator.newChildAllocator("final vectors", 0, Integer.MAX_VALUE)
+          val newRoot = VectorSchemaRoot.create(schema, finalVectorsAllocator)
+            val vectorLoader = new VectorLoader(newRoot)
+            vectorLoader.load(recordBatch)
+            val intReader = newRoot.getVector("emp_no").getReader
+
+            var i = 0
+            var count = 20
+            while (i < count) {
+              intReader.setPosition(i)
+              println(intReader.readInteger().intValue())
+              i += 1
+            }
+
+
+
+
+
+
+
+
+
+
     //    try {
     //      val recordBatch = vectorUnloader.getRecordBatch
     //
@@ -188,13 +242,13 @@ object Main1 {
     //        val vectorLoader = new VectorLoader(newRoot)
     //        vectorLoader.load(recordBatch)
     //        val intReader = newRoot.getVector("emp_no").getReader
-    ////        val bigIntReader = newRoot.getVector("bigInt").getReader
+    //        //        val bigIntReader = newRoot.getVector("bigInt").getReader
     //        var i = 0
     //        var count = 20
     //        while (i < count) {
     //          intReader.setPosition(i)
     //          println(intReader.readInteger().intValue())
-    //            i += 1
+    //          i += 1
     //        }
     //      } finally {
     //        if (recordBatch != null) recordBatch.close()
@@ -203,13 +257,5 @@ object Main1 {
     //      }
     //    }
 
-    var schema = schemaRoot.getSchema
-    val vectorUnloader = new VectorUnloader(schemaRoot)
-
-    val recordBatch = vectorUnloader.getRecordBatch
-
-    println("RECORD BARCH LENGTH: " + recordBatch.getLength)
-
-    print("++++++++++++++++  " + recordBatch.getNodes.get(0).toString)
   }
 }
