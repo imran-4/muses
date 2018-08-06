@@ -144,6 +144,8 @@ object ArrowVectorsWriter {
     val utf8Charset = Charset.forName("UTF-8")
     val bytes = value.getBytes(utf8Charset)
     vector.setSafe(index, bytes, 0, bytes.length)
+    vector.setValueCount(index)
+    vector.setValueLengthSafe(index, bytes.length)
   }
 
   //write also for complex data, dictionary, struct, list

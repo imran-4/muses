@@ -6,6 +6,8 @@ import java.nio.channels.Channels
 import akka.actor.{ActorRef, ActorSystem, Deploy, Props}
 import akka.cluster.Cluster
 import akka.stream.ActorMaterializer
+import com.google.flatbuffers.FlatBufferBuilder
+import com.sun.xml.internal.ws.api.server.SDDocument.Schema
 import de.tuberlin.dima.bdapro.muses.akka.publisher.Publisher
 import de.tuberlin.dima.bdapro.muses.akka.subscriber.Subscriber
 import de.tuberlin.dima.bdapro.muses.connector.Test
@@ -78,10 +80,13 @@ object MainPubSub
     val out = new ByteArrayOutputStream
     var channel = new WriteChannel(Channels.newChannel(out))
     var block = MessageSerializer.serialize(channel, batch)
+
     println("Starting to publish...")
     println("TIME (WHEN PUBLISHING)" + System.currentTimeMillis())
+
     publisher ! schema
     publisher ! out.toByteArray
+
     println("Published")
     //...........................................................
     addShutDownHook(system1)

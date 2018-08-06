@@ -120,13 +120,10 @@ class Test {
     var schemaRoot = read(vec, allocator)
 
     var schema = schemaRoot.getSchema
-
-    println("SSSSSSSSCCCCCHEEEMMAAAAA: " + schema.toJson)
     val vectorUnloader = new VectorUnloader(schemaRoot)
 
     val recordBatch = vectorUnloader.getRecordBatch
-    println("RECORD BARCH LENGTH: " + recordBatch.getLength)
-    print("++++++++++++++++  " + recordBatch.getNodes.get(0).toString)
+    schemaRoot.close()
     return (recordBatch, schema.toJson)
 
     //    try {
@@ -166,6 +163,7 @@ object Main1 {
     var (vec, allocator) = t.write()
     var schemaRoot = t.read(vec, allocator)
 
+    println(">>>>TSV>>>>>>>" + schemaRoot.contentToTSVString())
     var schema = schemaRoot.getSchema
     val vectorUnloader = new VectorUnloader(schemaRoot)
 

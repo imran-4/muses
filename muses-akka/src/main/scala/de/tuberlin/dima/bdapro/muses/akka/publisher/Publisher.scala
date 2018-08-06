@@ -35,10 +35,7 @@ class Publisher extends Actor with ActorLogging {
     case in: Array[Byte] => {
       log.info("Received String: {}", in)
       println("TIME IN PUBLISHER (WHEN PUBLISHING)" + System.currentTimeMillis())
-
       mediator ! Publish("content", in)
-      println("TIME IN PUBLISHER (WHEN PUBLISHED)" + System.currentTimeMillis())
-
     }
   }
 }
