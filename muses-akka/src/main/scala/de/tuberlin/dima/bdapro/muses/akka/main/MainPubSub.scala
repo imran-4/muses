@@ -1,18 +1,11 @@
 package de.tuberlin.dima.bdapro.muses.akka.main
 
-import java.io.ByteArrayOutputStream
-import java.nio.channels.Channels
-
 import akka.actor.{ActorRef, ActorSystem, Deploy, Props}
 import akka.cluster.Cluster
 import akka.stream.ActorMaterializer
-import com.google.flatbuffers.FlatBufferBuilder
-import com.sun.xml.internal.ws.api.server.SDDocument.Schema
 import de.tuberlin.dima.bdapro.muses.akka.publisher.Publisher
 import de.tuberlin.dima.bdapro.muses.akka.subscriber.Subscriber
-import de.tuberlin.dima.bdapro.muses.connector.Test
-import org.apache.arrow.vector.ipc.WriteChannel
-import org.apache.arrow.vector.ipc.message.MessageSerializer
+import de.tuberlin.dima.bdapro.muses.connector.arrow.writer.Writer
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -74,20 +67,26 @@ object MainPubSub
 //      val publisher = system1.actorOf(Props[Publisher], "publisher")
 //    }
 ///////////////////////////////////////////////////
-    var test = new Test()
-    var (batch, schema) = test.execute()
 
-    val out = new ByteArrayOutputStream
-    var channel = new WriteChannel(Channels.newChannel(out))
-    var block = MessageSerializer.serialize(channel, batch)
+//    var test = new Test()
+//    var (batch, schema) = test.execute()
+//
+//    val out = new ByteArrayOutputStream
+//    var channel = new WriteChannel(Channels.newChannel(out))
+//    var block = MessageSerializer.serialize(channel, batch)
 
     println("Starting to publish...")
     println("TIME (WHEN PUBLISHING)" + System.currentTimeMillis())
 
-    publisher ! schema
-    publisher ! out.toByteArray
+    val writer = new Writer
+    var (rs, cols) = writer.readDatabase()
+    writer.write(rs ,cols)
+    var schema = writer.getSchemaJson()
+    var os = writer.getByteArrayOutputStream()
 
-    println("Published")
+    publisher ! schema
+    publisher !os.toByteArray
+
     //...........................................................
     addShutDownHook(system1)
     addShutDownHook(system2)

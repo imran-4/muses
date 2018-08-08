@@ -48,52 +48,52 @@ object ArrowVectorsWriter {
 
   def writeTimeStampData(vector: TimeStampVector, index: Int, value: Long): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeDecimalData(vector: DecimalVector, index: Int, value: BigDecimal): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeIntData(vector: IntVector, index: Int, value: Int): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeBitData(vector: BitVector, index: Int, value: Boolean): Unit = {
     vector.setSafe(index, if (value) 1 else 0)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeIntervalYearData(vector: IntervalYearVector, index: Int, value: Int): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeIntervalDayData(vector: IntervalDayVector, index: Int, value: Int): Unit = {
     vector.setSafe(index, value, 100) //third argument is milliseconds
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeTimeSecData(vector: TimeSecVector, index: Int, value: Int): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeTimeMilliData(vector: TimeMilliVector, index: Int, value: Int): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeTimeMicroData(vector: TimeMicroVector, index: Int, value: Long): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeTimeNanoData(vector: TimeNanoVector, index: Int, value: Long): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeDateDayData(vector: DateDayVector, index: Int, value: java.util.Date): Unit = {
@@ -101,50 +101,50 @@ object ArrowVectorsWriter {
     val formatter = DateTimeFormat.forPattern("yyyyMMdd")
     val lvalue = localDate.toString(formatter)
     vector.asInstanceOf[DateDayVector].setSafe(index, Integer.parseInt(lvalue).intValue())
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeDateMilliData(vector: DateMilliVector, index: Int, value: Long): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeSmallIntData(vector: SmallIntVector, index: Int, value: Int): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeTinyIntData(vector: TinyIntVector, index: Int, value: Int): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeBigIntData(vector: BigIntVector, index: Int, value: Long): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeFloatData(vector: Float4Vector, index: Int, value: Float): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeDoubleData(vector: Float8Vector, index: Int, value: Double): Unit = {
     vector.setSafe(index, value)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeVarBinaryData(vector: VarBinaryVector, index: Int, value: String): Unit = {
     val utf8Charset = Charset.forName("UTF-8")
     vector.setSafe(index, value.getBytes(utf8Charset))
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
   }
 
   def writeVarCharData(vector: VarCharVector, index: Int, value: String): Unit = {
     val utf8Charset = Charset.forName("UTF-8")
     val bytes = value.getBytes(utf8Charset)
     vector.setSafe(index, bytes, 0, bytes.length)
-    vector.setValueCount(index)
+    vector.setValueCount(index+1)
     vector.setValueLengthSafe(index, bytes.length)
   }
 

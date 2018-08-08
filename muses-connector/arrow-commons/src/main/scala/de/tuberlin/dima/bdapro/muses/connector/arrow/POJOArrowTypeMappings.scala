@@ -1,7 +1,7 @@
-package de.tuberlin.dima.bdapro.muses.connector
+package de.tuberlin.dima.bdapro.muses.connector.arrow
 
-import org.apache.arrow.vector.types.{DateUnit, FloatingPointPrecision, IntervalUnit, TimeUnit}
 import org.apache.arrow.vector.types.pojo.ArrowType
+import org.apache.arrow.vector.types.{DateUnit, FloatingPointPrecision, IntervalUnit, TimeUnit}
 
 object POJOArrowTypeMappings {
 
