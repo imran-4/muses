@@ -30,6 +30,17 @@
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
         </dependency>
+
+        <!-- YAML Reader-->
+        <!-- https://mvnrepository.com/artifact/com.esotericsoftware.yamlbeans/yamlbeans -->
+        <dependency>
+            <groupId>com.esotericsoftware.yamlbeans</groupId>
+            <artifactId>yamlbeans</artifactId>
+            <version>1.08</version>
+        </dependency>
+
+
+
         <!--<dependency>-->
         <!--<groupId>org.apache.hadoop</groupId>-->
         <!--<artifactId>hadoop-yarn-project</artifactId>-->
