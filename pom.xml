@@ -49,7 +49,9 @@
         <module>muses-connector</module>
         <module>muses-akka</module>
         <module>muses-netty</module>
+        <module>muses-starter</module>
         <module>examples</module>
+
     </modules>
     <dependencyManagement>
         <dependencies>

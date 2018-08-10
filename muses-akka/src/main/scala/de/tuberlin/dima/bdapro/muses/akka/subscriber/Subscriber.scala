@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.{Subscribe, SubscribeAck}
 import akka.stream.actor.ActorSubscriberMessage.OnComplete
-import de.tuberlin.dima.bdapro.muses.connector.arrow.reader.Reader
+import de.tuberlin.dima.bdapro.muses.connector.arrow.reader._
 
 class Subscriber extends Actor with ActorLogging {
   var reader = new Reader()
