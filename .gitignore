@@ -15,4 +15,5 @@ muses-akka/.settings/*
 muses-akka/.project
 muses-yarn-client/target/*
 muses-yarn-client/muses-yarn-client.iml
-
+*.iml
+dependency-reduced-pom.xml
