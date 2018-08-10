@@ -7,7 +7,7 @@ import java.util
 
 import com.google.common.collect.ImmutableList
 import de.tuberlin.dima.bdapro.muses.connector.arrow.POJOArrowTypeMappings
-wr  import de.tuberlin.dima.bdapro.muses.connector.rdbms.reader.DataReader
+import de.tuberlin.dima.bdapro.muses.connector.rdbms.reader.DataReader
 import org.apache.arrow.memory.{AllocationListener, RootAllocator}
 import org.apache.arrow.vector.ipc.WriteChannel
 import org.apache.arrow.vector.ipc.message.MessageSerializer
