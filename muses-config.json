@@ -1,0 +1,49 @@
+{
+  "source":
+  {
+    "publisher":
+    {
+      "ip": "localhost",
+      "port": 5001,
+      "actorname": "publisher",
+      "subscriberpath": "/usr/subscriber"
+    },
+    "db":
+    {
+      "infos":
+      [
+        {
+          "type": "rdbms",
+          "properties": {
+            "driver": "",
+            "url": "jdbc:mysql://localhost/employees?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
+            "username": "root",
+            "password": "root",
+            "query": "SELECT * FROM employees"
+          }
+        }
+      ]
+    }
+  },
+  "target":
+  {
+    "publisher":
+    {
+      "ip": "localhost",
+      "port": 5002,
+      "actorname": "subscriber"
+    },
+    "db":
+    {
+      "infos":
+      [
+        {
+          "type": "file",
+          "properties": {
+            "path": "/home/mi/test.csv"
+          }
+        }
+      ]
+    }
+  }
+}

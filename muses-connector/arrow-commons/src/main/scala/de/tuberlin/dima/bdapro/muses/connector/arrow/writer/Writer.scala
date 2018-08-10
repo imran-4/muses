@@ -7,13 +7,13 @@ import java.util
 
 import com.google.common.collect.ImmutableList
 import de.tuberlin.dima.bdapro.muses.connector.arrow.POJOArrowTypeMappings
-import de.tuberlin.dima.bdapro.muses.connector.rdbms.connectionmanager._
-import de.tuberlin.dima.bdapro.muses.connector.rdbms.reader.DataReader
+wr  import de.tuberlin.dima.bdapro.muses.connector.rdbms.reader.DataReader
 import org.apache.arrow.memory.{AllocationListener, RootAllocator}
 import org.apache.arrow.vector.ipc.WriteChannel
 import org.apache.arrow.vector.ipc.message.MessageSerializer
 import org.apache.arrow.vector.{FieldVector, VectorSchemaRoot, VectorUnloader}
 import org.apache.arrow.vector.types.pojo.{ArrowType, Field, FieldType, Schema}
+
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 
@@ -26,16 +26,11 @@ class Writer {
   private def field(na: String, typ: ArrowType, chi: Field*) = fieldx(na, true, typ, chi: _*)
 
   //TODO: LATER MOVE IT TO RELATED PROJECT OF JDBC
-  def readDatabase(): (ResultSet, util.ArrayList[(String, String)]) = {
-    val driver = JDBCDriversInfo.MYSQL_DRIVER
-    val url = "jdbc:mysql://localhost/employees?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
-    val username = "root"
-    val password = "root"
-    val query = "SELECT * FROM employees"
+  def readDatabase(driver: String, url: String, userName: String, password: String, query: String): (ResultSet, util.ArrayList[(String, String)]) = {
 
     val reader = new DataReader()
     reader.loadDrivers(driver)
-    val connection = reader.getConnection(url, username, password)
+    val connection = reader.getConnection(url, userName, password)
     val statement = reader.getPreparedStatement(connection, query)
     val resultSet = reader.getResultSet(statement)
     val columns = reader.getColumnNames(reader.getMetaData(resultSet))
