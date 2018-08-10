@@ -43,13 +43,12 @@
         <build.copyDependenciesPhase>none</build.copyDependenciesPhase>
     </properties>
     <modules>
-
-        <module>muses-akka</module>
-        <module>muses-netty</module>
-        <module>muses-connector</module>
-        <module>muses-commons</module>
         <module>muses-yarn-appmaster</module>
         <module>muses-yarn-client</module>
+        <module>muses-commons</module>
+        <module>muses-connector</module>
+        <module>muses-akka</module>
+        <module>muses-netty</module>
         <module>examples</module>
     </modules>
     <dependencyManagement>

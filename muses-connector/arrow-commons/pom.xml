@@ -9,10 +9,50 @@
         <artifactId>muses-connector</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-
-    <groupId>de.tuberlin.dima.bdapro.muses</groupId>
-    <artifactId>arrow-manager</artifactId>
+    <artifactId>arrow-commons</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>de.tuberlin.dima.bdapro.muses</groupId>
+            <artifactId>rdbms-rw</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.tuberlin.dima.bdapro.muses</groupId>
+            <artifactId>file-rw</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- apache arrow -->
+        
+        <dependency>
+            <groupId>org.apache.arrow</groupId>
+            <artifactId>arrow-tools</artifactId>
+            <version>${arrow.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.arrow</groupId>
+            <artifactId>arrow-vector</artifactId>
+            <version>${arrow.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.arrow</groupId>
+            <artifactId>arrow-memory</artifactId>
+            <version>${arrow.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.arrow</groupId>
+            <artifactId>arrow-format</artifactId>
+            <version>${arrow.version}</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.arrow</groupId>-->
+            <!--<artifactId>arrow-java-root</artifactId>-->
+            <!--<version>${arrow.version}</version>-->
+        <!--</dependency>-->
+    </dependencies>
+
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
         <plugins>

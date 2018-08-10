@@ -10,11 +10,8 @@
         <artifactId>muses-connector</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-
-    <groupId>de.tuberlin.dima.bdapro.muses</groupId>
-    <artifactId>file-connector</artifactId>
+    <artifactId>file-rw</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
@@ -49,7 +46,5 @@
             </plugin>
 
         </plugins>
-    </build>
-
-    
+    </build>    
 </project>

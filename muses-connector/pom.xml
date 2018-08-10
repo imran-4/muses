@@ -22,55 +22,6 @@
 		<arrow.version>0.9.0</arrow.version>
 	</properties>
 
-
-	<dependencies>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-compiler</artifactId>
-			<version>${scala.version}</version>
-			<!-- <scope>compile</scope> -->
-		</dependency>
-
-		<!-- apache arrow -->
-		
-		<dependency>
-			<groupId>org.apache.arrow</groupId>
-			<artifactId>arrow-tools</artifactId>
-			<version>${arrow.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.arrow</groupId>
-			<artifactId>arrow-vector</artifactId>
-			<version>${arrow.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.arrow</groupId>
-			<artifactId>arrow-memory</artifactId>
-			<version>${arrow.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.arrow</groupId>
-			<artifactId>arrow-format</artifactId>
-			<version>${arrow.version}</version>
-		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>org.apache.arrow</groupId>-->
-			<!--<artifactId>arrow-java-root</artifactId>-->
-			<!--<version>${arrow.version}</version>-->
-		<!--</dependency>-->
-
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>6.0.6</version>
-		</dependency>
-		<dependency>
-			<artifactId>junit</artifactId>
-			<groupId>junit</groupId>
-			<version>4.11</version>
-		</dependency>
-	</dependencies>
-
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
 		<plugins>

@@ -12,6 +12,8 @@
         <artifactId>muses-connector</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+    <artifactId>rdbms-rw</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -20,11 +22,6 @@
             <version>${MYSQL_CONNECTOR_VERSION}</version>
         </dependency>
     </dependencies>
-
-    <groupId>de.tuberlin.dima.bdapro.muses</groupId>
-    <artifactId>rdbms-connector</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
