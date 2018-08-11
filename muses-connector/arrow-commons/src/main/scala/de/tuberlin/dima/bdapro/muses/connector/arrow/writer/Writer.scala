@@ -63,9 +63,7 @@ class Writer {
         var obj = data.getObject(name)
         ArrowVectorsWriter.writeFieldVector(field, obj, count)
       })
-
     }
-
     this.vectorSchemaRoot = new VectorSchemaRoot(schema.getFields(), fieldVectors, count+1)
   }
 

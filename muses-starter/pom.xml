@@ -16,6 +16,21 @@
 
     <dependencies>
 
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.5</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-jackson_2.12</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+
         <dependency>
             <groupId>de.tuberlin.dima.bdapro.muses</groupId>
             <artifactId>arrow-commons</artifactId>

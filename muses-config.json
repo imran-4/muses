@@ -1,17 +1,13 @@
 {
-  "source":
-  {
-    "publisher":
+  "publishers": [
     {
       "ip": "localhost",
-      "port": 5001,
+      "port": "5001",
       "actorname": "publisher",
-      "subscriberpath": "/usr/subscriber"
-    },
-    "db":
-    {
-      "infos":
-      [
+      "subscriberspath": [
+        "/usr/subscriber"
+      ],
+      "dbs": [
         {
           "type": "rdbms",
           "properties": {
@@ -19,24 +15,20 @@
             "url": "jdbc:mysql://localhost/employees?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
             "username": "root",
             "password": "root",
-            "query": "SELECT * FROM employees"
+            "query": "SELECT * FROM employees",
+            "partitionkey": "emp_no",
+            "totalpartitions": 2
           }
         }
       ]
     }
-  },
-  "target":
-  {
-    "publisher":
+  ],
+  "subscribers": [
     {
       "ip": "localhost",
       "port": 5002,
-      "actorname": "subscriber"
-    },
-    "db":
-    {
-      "infos":
-      [
+      "actorname": "subscriber",
+      "dbs": [
         {
           "type": "file",
           "properties": {
@@ -45,5 +37,5 @@
         }
       ]
     }
-  }
+  ]
 }
