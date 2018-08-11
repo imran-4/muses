@@ -41,6 +41,8 @@ object MusesStarter {
     val content: String = readFile(configFilePath, StandardCharsets.UTF_8)
     var configurations = jsonStringToMap(content)
 
+    /////////////////////
+    //PUBLISHERS
     var publishers:util.ArrayList[Publisher] = new util.ArrayList[Publisher]()
     var numberOfPublishers = configurations.get("publishers").getAsJsonArray.size()
     for (i <- 0 until numberOfPublishers) {
@@ -87,6 +89,55 @@ object MusesStarter {
       publisher.dataSources = dbs.toArray(new Array[DataSourceBase](0))
 
       publishers.add(publisher)
+    }
+
+    /////////////////////
+    //SUBSCRIBERS
+    var subscribers:util.ArrayList[Subscriber] = new util.ArrayList[Subscriber]()
+    var numberOfSubscribers = configurations.get("subscribers").getAsJsonArray.size()
+
+    for (i <- 0 until numberOfSubscribers) {
+      var subscriberJsonObject = configurations.get("subscribers").getAsJsonArray.get(0).getAsJsonObject
+      var subscriber: Subscriber = new Subscriber
+      subscriber.ip = subscriberJsonObject.get("ip").getAsString
+      subscriber.port = subscriberJsonObject.get("port").getAsInt
+      subscriber.actorName = subscriberJsonObject.get("actorname").getAsString
+
+      val dbs = new util.ArrayList[DataSource]
+      val dataSourcesLength = subscriberJsonObject.get("dbs").getAsJsonArray.size()
+      for (j <- 0 until dataSourcesLength) {
+
+        var dbJsonObject = subscriberJsonObject.get("dbs").getAsJsonArray.get(j).getAsJsonObject
+        var ds = new DataSource
+        ds.dataSourceType = DataSourceTypes.withName(dbJsonObject.get("type").getAsString.toUpperCase)
+
+        var dbPropertiesJsonObject = dbJsonObject.get("properties").getAsJsonObject
+        ds.properties = ds.dataSourceType match {
+          case DataSourceTypes.RDBMS => {
+            var rdbmsProp = new RDBMSDataSourceProperties
+            rdbmsProp.driver = dbPropertiesJsonObject.get("driver").getAsString
+            rdbmsProp.url = dbPropertiesJsonObject.get("url").getAsString
+            rdbmsProp.userName = dbPropertiesJsonObject.get("username").getAsString
+            rdbmsProp.password = dbPropertiesJsonObject.get("password").getAsString
+            rdbmsProp.query = dbPropertiesJsonObject.get("query").getAsString
+            rdbmsProp.partitionKey = dbPropertiesJsonObject.get("partitionkey").getAsString
+            rdbmsProp.numberOfPartitions = dbPropertiesJsonObject.get("totalpartitions").getAsInt
+
+            rdbmsProp
+          }
+          case DataSourceTypes.FILE => {
+            var fileDBProp = new FileDataSourceProperties
+            fileDBProp.filePath = dbPropertiesJsonObject.get("path").getAsString
+
+            fileDBProp
+          }
+          case _ => throw new Exception("The type is not supported yet.")
+        }
+        dbs.add(ds)
+      }
+      subscriber.dataSources = dbs.toArray(new Array[DataSourceBase](0))
+
+      subscribers.add(subscriber)
     }
 
     var rol = "sub"
