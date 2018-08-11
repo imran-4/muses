@@ -18,7 +18,7 @@ object POJOArrowTypeMappings {
       case "BIT" => new ArrowType.Bool
       case "TINYINT" => new ArrowType.Int(8, true)
       case "SMALLINT" => new ArrowType.Int(16, true)
-      case "INTEGER" => new ArrowType.Int(32, true)
+      case "INT" | "INTEGER" => new ArrowType.Int(32, true)
       case "BIGINT" => new ArrowType.Int(64, true)
       case "REAL" => new ArrowType.FloatingPoint(FloatingPointPrecision.SINGLE)
       case "FLOAT" => new ArrowType.FloatingPoint(FloatingPointPrecision.SINGLE)

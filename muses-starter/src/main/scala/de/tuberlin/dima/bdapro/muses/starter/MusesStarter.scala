@@ -1,19 +1,15 @@
 package de.tuberlin.dima.bdapro.muses.starter
 
+import java.io.IOException
+import java.net.InetAddress
+import java.nio.charset.{Charset, StandardCharsets}
 import java.nio.file.{Files, Paths}
+import java.util
 
+import com.google.gson.{JsonObject, JsonParser}
 import de.tuberlin.dima.bdapro.muses.akka.main.MainPubSub
 import de.tuberlin.dima.bdapro.muses.connector.arrow.writer.Writer
 import de.tuberlin.dima.bdapro.muses.connector.rdbms.connectionmanager.JDBCDriversInfo
-import org.json4s._
-import org.json4s.jackson.JsonMethods._
-import java.io.IOException
-import java.nio.charset.{Charset, StandardCharsets}
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.util
-
-import com.google.gson.{Gson, JsonObject, JsonParser}
 
 object MusesStarter {
 
@@ -24,7 +20,6 @@ object MusesStarter {
 //  }
 
   def jsonStringToMap(jsonString: String): JsonObject = {
-    import com.google.gson.JsonObject
     val jsonObject = new JsonParser().parse(jsonString).getAsJsonObject
     return jsonObject
   }
@@ -140,28 +135,60 @@ object MusesStarter {
       subscribers.add(subscriber)
     }
 
-    var rol = "sub"
-    if (rol == "pub") {
-      val writer = new Writer
-      val driver = JDBCDriversInfo.MYSQL_DRIVER
-      val url = "jdbc:mysql://localhost/employees?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
-      val username = "root"
-      val password = "root"
-      val query = "SELECT * FROM employees"
+    val host = InetAddress.getLocalHost
+    val hostAddress = host.getHostAddress
+    println("HOST: " + host.toString)
+    println("HOSTADDRESS: " + hostAddress)
 
-      var (rs, cols) = writer.readDatabase(driver, url, username, password, query)
-      writer.write(rs ,cols)
-      var schema = writer.getSchemaJson()
-      var os = writer.getByteArrayOutputStream()
-      var main = new MainPubSub
-      main.createPubliser("publisher")
-      main.publishSchema(schema)
-      main.publishData(os.toByteArray)
-      main.attachShutdownHook()
-    } else {
-      var main = new MainPubSub
-      main.createSubscriber("subscriber")
-      main.attachShutdownHook()
-    }
+    //create and run all subscribers
+
+    var mainSub = new MainPubSub
+    mainSub.createSubscriber(subscribers.get(0).actorName)
+    mainSub.attachShutdownHook()
+
+    //create and run all publishers
+
+    val writer = new Writer
+    val driver = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].driver
+    val url = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].url
+    val username = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].userName
+    val password = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].password
+    val query = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].query
+
+    var (rs, cols) = writer.readDatabase(driver, url, username, password, query)
+    writer.write(rs ,cols)
+    var schema = writer.getSchemaJson()
+    var os = writer.getByteArrayOutputStream()
+    var mainPub = new MainPubSub
+    mainPub.createPubliser(publishers.get(0).actorName)
+    mainPub.publishSchema(schema)
+    mainPub.publishData(os.toByteArray)
+    mainPub.attachShutdownHook()
+
+
+
+    //    var rol = "sub"
+//    if (rol == "pub") {
+//      val writer = new Writer
+//      val driver = JDBCDriversInfo.MYSQL_DRIVER
+//      val url = "jdbc:mysql://localhost/employees?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
+//      val username = "root"
+//      val password = "root"
+//      val query = "SELECT * FROM employees"
+//
+//      var (rs, cols) = writer.readDatabase(driver, url, username, password, query)
+//      writer.write(rs ,cols)
+//      var schema = writer.getSchemaJson()
+//      var os = writer.getByteArrayOutputStream()
+//      var main = new MainPubSub
+//      main.createPubliser("publisher")
+//      main.publishSchema(schema)
+//      main.publishData(os.toByteArray)
+//      main.attachShutdownHook()
+//    } else {
+//      var main = new MainPubSub
+//      main.createSubscriber("subscriber")
+//      main.attachShutdownHook()
+//    }
   }
 }

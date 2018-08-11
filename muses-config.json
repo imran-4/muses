@@ -1,7 +1,7 @@
 {
   "publishers": [
     {
-      "ip": "localhost",
+      "ip": "127.0.0.1",
       "port": "5001",
       "actorname": "publisher",
       "subscriberspath": [
@@ -11,7 +11,7 @@
         {
           "type": "rdbms",
           "properties": {
-            "driver": "",
+            "driver": "com.mysql.cj.jdbc.Driver",
             "url": "jdbc:mysql://localhost/employees?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
             "username": "root",
             "password": "root",
@@ -25,7 +25,7 @@
   ],
   "subscribers": [
     {
-      "ip": "localhost",
+      "ip": "127.0.0.1",
       "port": 5002,
       "actorname": "subscriber",
       "dbs": [
