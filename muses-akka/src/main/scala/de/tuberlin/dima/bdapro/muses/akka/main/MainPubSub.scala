@@ -1,6 +1,7 @@
 package de.tuberlin.dima.bdapro.muses.akka.main
 
-import akka.actor.{ActorRef, ActorSystem, Deploy, Props}
+import akka.actor.{ActorRef, ActorSystem, Address, Deploy, Props}
+import akka.cluster.Cluster
 import akka.stream.ActorMaterializer
 import de.tuberlin.dima.bdapro.muses.akka.publisher.Publisher
 import de.tuberlin.dima.bdapro.muses.akka.subscriber.Subscriber
@@ -16,12 +17,14 @@ class MainPubSub
   private var actorRef: ActorRef = null
 
   def createPubliser(actorRefName: String): Unit = {
-    this.actorRef = this.system.actorOf(Props[Publisher], actorRefName)
+    this.actorRef = this.system.actorOf(Props[Publisher].withDeploy(Deploy.local), actorRefName)
+
   }
 
   def createSubscriber(actorRefName: String): Unit = {
-    this.actorRef = this.system.actorOf(Props[Subscriber], actorRefName)
+    this.actorRef = this.system.actorOf(Props[Subscriber].withDeploy(Deploy.local), actorRefName)
   }
+
   def attachShutdownHook(): Unit = {
     sys.addShutdownHook({
       system.terminate()

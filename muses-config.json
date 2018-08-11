@@ -1,8 +1,8 @@
 {
   "publishers": [
     {
-      "ip": "127.0.0.1",
-      "port": "5001",
+      "ip": "127.0.1.1",
+      "port": 5001,
       "actorname": "publisher",
       "subscriberspath": [
         "/usr/subscriber"
@@ -25,7 +25,7 @@
   ],
   "subscribers": [
     {
-      "ip": "127.0.0.1",
+      "ip": "127.0.1.0",
       "port": 5002,
       "actorname": "subscriber",
       "dbs": [

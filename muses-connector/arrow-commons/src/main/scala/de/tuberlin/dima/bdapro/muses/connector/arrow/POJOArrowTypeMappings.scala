@@ -26,7 +26,7 @@ object POJOArrowTypeMappings {
       case "BINARY" => new ArrowType.Binary
       case "VARBINARY" => new ArrowType.Binary
       case "LONGVARBINARY" => new ArrowType.Binary
-      case "DATE" => new ArrowType.Date(DateUnit.MILLISECOND)
+      case "DATE" => new ArrowType.Date(DateUnit.DAY)
       case "TIME" => new ArrowType.Time(TimeUnit.MILLISECOND, 32)
       case "TIMESTAMP" => new ArrowType.Timestamp(TimeUnit.MILLISECOND, null)
       case "CLOB" => new ArrowType.Utf8

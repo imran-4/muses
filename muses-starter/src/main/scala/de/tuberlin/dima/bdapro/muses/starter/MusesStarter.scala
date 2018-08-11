@@ -142,53 +142,37 @@ object MusesStarter {
 
     //create and run all subscribers
 
-    var mainSub = new MainPubSub
-    mainSub.createSubscriber(subscribers.get(0).actorName)
-    mainSub.attachShutdownHook()
-
-    //create and run all publishers
-
-    val writer = new Writer
-    val driver = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].driver
-    val url = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].url
-    val username = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].userName
-    val password = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].password
-    val query = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties].query
-
-    var (rs, cols) = writer.readDatabase(driver, url, username, password, query)
-    writer.write(rs ,cols)
-    var schema = writer.getSchemaJson()
-    var os = writer.getByteArrayOutputStream()
-    var mainPub = new MainPubSub
-    mainPub.createPubliser(publishers.get(0).actorName)
-    mainPub.publishSchema(schema)
-    mainPub.publishData(os.toByteArray)
-    mainPub.attachShutdownHook()
+    var pubAddress: InetAddress = InetAddress.getByName(publishers.get(0).ip)
+    var subAddress: InetAddress = InetAddress.getByName(subscribers.get(0).ip)
 
 
+    if (subAddress.equals(host)) {
+      println("Found Subscriber. Creating it.")
+      var mainSub = new MainPubSub
+      mainSub.createSubscriber(subscribers.get(0).actorName)
+      mainSub.attachShutdownHook()
+    } else if (pubAddress.equals(host)) {
+      //create and run all publishers
+      val writer = new Writer
+      var dataSourceProperties = publishers.get(0).dataSources(0).asInstanceOf[DataSource].properties.asInstanceOf[RDBMSDataSourceProperties]
+      val driver = dataSourceProperties.driver
+      val url = dataSourceProperties.url
+      val username = dataSourceProperties.userName
+      val password = dataSourceProperties.password
+      val query = dataSourceProperties.query
 
-    //    var rol = "sub"
-//    if (rol == "pub") {
-//      val writer = new Writer
-//      val driver = JDBCDriversInfo.MYSQL_DRIVER
-//      val url = "jdbc:mysql://localhost/employees?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
-//      val username = "root"
-//      val password = "root"
-//      val query = "SELECT * FROM employees"
-//
-//      var (rs, cols) = writer.readDatabase(driver, url, username, password, query)
-//      writer.write(rs ,cols)
-//      var schema = writer.getSchemaJson()
-//      var os = writer.getByteArrayOutputStream()
-//      var main = new MainPubSub
-//      main.createPubliser("publisher")
-//      main.publishSchema(schema)
-//      main.publishData(os.toByteArray)
-//      main.attachShutdownHook()
-//    } else {
-//      var main = new MainPubSub
-//      main.createSubscriber("subscriber")
-//      main.attachShutdownHook()
-//    }
+      var (rs, cols) = writer.readDatabase(driver, url, username, password, query)
+      writer.write(rs ,cols)
+      var schema = writer.getSchemaJson()
+      var os = writer.getByteArrayOutputStream()
+
+      var mainPub = new MainPubSub
+      mainPub.createPubliser(publishers.get(0).actorName)
+      Thread.sleep(5000)
+      mainPub.publishSchema(schema)
+      Thread.sleep(5000)
+      mainPub.publishData(os.toByteArray)
+      mainPub.attachShutdownHook()
+    }
   }
 }
