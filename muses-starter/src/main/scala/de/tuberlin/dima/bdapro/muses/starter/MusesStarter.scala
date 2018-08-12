@@ -32,8 +32,11 @@ object MusesStarter {
 
   def main(args: Array[String]): Unit = {
 
+    println("JSON CONTENT: " + args(0))
+
     val configFilePath = args(0).trim
     val content: String = readFile(configFilePath, StandardCharsets.UTF_8)
+    println("JSON CONTENT: " + content)
     var configurations = jsonStringToMap(content)
 
     /////////////////////

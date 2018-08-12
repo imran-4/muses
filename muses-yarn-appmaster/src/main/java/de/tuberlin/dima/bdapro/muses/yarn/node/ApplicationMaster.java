@@ -43,12 +43,18 @@ public class ApplicationMaster {
 
     public static void main(String[] args) throws Exception {
         ApplicationAttemptId applicationAttemptId = null;
+        String appMasterJarPath = "";
         String appJarPath = "";
         String appConfFilePath = "";
+
         long appJarTimestamp = 0;
+        long appMasterJarTimestamp = 0;
         long appConfFileTimestamp = 0;
+
         long appJarPathLen = 0;
+        long appMasterJarPathLen = 0;
         long appConfFilePathLen = 0;
+
         Configuration conf = new YarnConfiguration();
         Options options = ApplicationMaster.getCliArgs();
         CommandLine cliParser = null;
@@ -88,15 +94,32 @@ public class ApplicationMaster {
         }
 
         if (envs.containsKey("AM_JAR_PATH")) {
-            appJarPath = envs.get("AM_JAR_PATH");
-            LOG.debug("Jar path: " + appJarPath);
+            appMasterJarPath = envs.get("AM_JAR_PATH");
+            LOG.debug("Jar path: " + appMasterJarPath);
 
             if (envs.containsKey("AM_JAR_TIMESTAMP")) {
-                appJarTimestamp = Long.valueOf(envs.get("AM_JAR_TIMESTAMP"));
+                appMasterJarTimestamp = Long.valueOf(envs.get("AM_JAR_TIMESTAMP"));
             }
 
             if (envs.containsKey("AM_JAR_LENGTH")) {
-                appJarPathLen = Long.valueOf(envs.get("AM_JAR_LENGTH"));
+                appMasterJarPathLen = Long.valueOf(envs.get("AM_JAR_LENGTH"));
+            }
+
+            if (!appMasterJarPath.isEmpty() && (appMasterJarTimestamp <= 0 || appMasterJarPathLen <= 0)) {
+                LOG.error("Invalid values for the jar related environment variables. Values are: Jar Path: " + appMasterJarPath  + ", Length: " + appMasterJarPathLen + ", Timestamp: " + appMasterJarTimestamp);
+                throw new IllegalArgumentException("Invalid values for the jar related environment variables.");
+            }
+        }
+        if (envs.containsKey("APP_JAR_PATH")) {
+            appJarPath = envs.get("APP_JAR_PATH");
+            LOG.debug("App Jar path: " + appJarPath);
+
+            if (envs.containsKey("APP_JAR_TIMESTAMP")) {
+                appJarTimestamp = Long.valueOf(envs.get("APP_JAR_TIMESTAMP"));
+            }
+
+            if (envs.containsKey("APP_JAR_LENGTH")) {
+                appJarPathLen = Long.valueOf(envs.get("APP_JAR_LENGTH"));
             }
 
             if (!appJarPath.isEmpty() && (appJarTimestamp <= 0 || appJarPathLen <= 0)) {
@@ -146,15 +169,27 @@ public class ApplicationMaster {
         Map<String, String> containerEnv = new HashMap<String, String>();
         containerEnv.put("CLASSPATH", "./*");
         LocalResource appMasterJar = Records.newRecord(LocalResource.class);
-        if (!appJarPath.isEmpty()) {
+        if (!appMasterJarPath.isEmpty()) {
             appMasterJar.setType(LocalResourceType.FILE);
-            Path jarPath = new Path(appJarPath);
+            Path jarPath = new Path(appMasterJarPath);
             jarPath = FileSystem.get(conf).makeQualified(jarPath);
             appMasterJar.setResource(ConverterUtils.getYarnUrlFromPath(jarPath));
             appMasterJar.setTimestamp(appJarTimestamp);
             appMasterJar.setSize(appJarPathLen);
             appMasterJar.setVisibility(LocalResourceVisibility.PUBLIC);
         }
+
+        LocalResource appJar = Records.newRecord(LocalResource.class);
+        if (!appJarPath.isEmpty()) {
+            appJar.setType(LocalResourceType.FILE);
+            Path jarPath = new Path(appJarPath);
+            jarPath = FileSystem.get(conf).makeQualified(jarPath);
+            appJar.setResource(ConverterUtils.getYarnUrlFromPath(jarPath));
+            appJar.setTimestamp(appJarTimestamp);
+            appJar.setSize(appJarPathLen);
+            appJar.setVisibility(LocalResourceVisibility.PUBLIC);
+        }
+
 
         LocalResource appConfFile = Records.newRecord(LocalResource.class);
         if (!appConfFilePath.isEmpty()) {
@@ -175,10 +210,11 @@ public class ApplicationMaster {
                 ContainerLaunchContext appContainer = Records.newRecord(ContainerLaunchContext.class);
                 Map<String, LocalResource> map = new HashMap<String, LocalResource>();
                 map.put("AppMaster.jar", appMasterJar);
+                map.put("App.jar", appJar);
                 map.put("muses-conf.json", appConfFile);
                 appContainer.setLocalResources(map);
                 appContainer.setEnvironment(containerEnv);
-                appContainer.setCommands(Collections.singletonList("$JAVA_HOME/bin/java" + " -Xmx256M" + " de.tuberlin.dima.bdapro.muses.yarn.node.MusesStarter " + appConfFilePath + " 1>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stdout" + " 2>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stderr"));
+                appContainer.setCommands(Collections.singletonList("$JAVA_HOME/bin/java" + " -Xmx512M" + " -jar " + appJarPath + " de.tuberlin.dima.bdapro.muses.starter.MusesStarter " + appConfFilePath + " 1>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stdout" + " 2>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stderr"));
                 LOG.info("Launching the container");
                 nmClient.startContainer(container, appContainer);
             }

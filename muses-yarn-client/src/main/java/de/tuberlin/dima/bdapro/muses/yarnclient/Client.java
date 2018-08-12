@@ -24,6 +24,7 @@ import org.apache.hadoop.yarn.util.Records;
 import java.io.IOException;
 import java.util.*;
 
+//COMMAND: $HADOOP_HOME/bin/yarn jar muses-yarn-client/target/muses-yarn-client-1.0.0-SNAPSHOT.jar de.tuberlin.dima.bdapro.muses.yarnclient.Client -jar muses-yarn-appmaster/target/muses-yarn-appmaster-1.0.0-SNAPSHOT.jar -number_of_containers=1 -app_jar muses-starter/target/muses-starter-1.0.0-SNAPSHOT.jar -conf=muses-config.json
 public class Client {
     private static final Log LOG = LogFactory.getLog(Client.class);
 
@@ -42,6 +43,7 @@ public class Client {
         options.addOption("application_master_memory", true, "Memory (in MBs) for the application master.");
 
         options.addOption("jar", true, "JAR file containing the application master.");
+        options.addOption("app_jar", true, "JAR file containing the application.");
         options.addOption("conf", true, "Configuration file for the nodes running Muses.");
 
         options.addOption("queue", true, "Resource Manager Queue.");
@@ -97,7 +99,8 @@ public class Client {
         }
 
         String applicationMasterJarPath = cliParser.getOptionValue("jar");
-        String applicationMasterConfFilePath = cliParser.getOptionValue("conf");
+        String applicationJarPath = cliParser.getOptionValue("app_jar");
+        String applicationConfFilePath = cliParser.getOptionValue("conf");
         int containerMemory = Integer.parseInt(cliParser.getOptionValue("container_memory", "512"));
         int containerVirtualCores = Integer.parseInt(cliParser.getOptionValue("container_vcores", "1"));
         int numContainers = Integer.parseInt(cliParser.getOptionValue("number_of_containers", "1"));
@@ -166,7 +169,9 @@ public class Client {
         try {
             Client.addResources(applicationName, fs, applicationMasterJarPath, "AppMaster.jar", appId.getId(),
                     localResources, null);
-            Client.addResources(applicationName, fs, applicationMasterConfFilePath, "muses-conf.json", appId.getId(),
+            Client.addResources(applicationName, fs, applicationJarPath, "App.jar", appId.getId(),
+                    localResources, null);
+            Client.addResources(applicationName, fs, applicationConfFilePath, "muses-conf.json", appId.getId(),
                     localResources, null);
         } catch (IOException ex) {
             LOG.fatal("IOException has occured. ", ex);
@@ -286,17 +291,33 @@ public class Client {
             , FileSystem fs, Configuration conf) throws IOException{
         Map<String, String> env = new HashMap<String, String>();
 
-        LocalResource appJarResource = localResources.get("AppMaster.jar");
+        //...............................
+        LocalResource appMasterJarResource = localResources.get("AppMaster.jar");
+
+        Path hdfsAppMasterJarPath = new Path(fs.getHomeDirectory(), appMasterJarResource.getResource().getFile());
+        FileStatus hdfsAppMasterJarStatus = fs.getFileStatus(hdfsAppMasterJarPath);
+        long hdfsAppMasterJarLength = hdfsAppMasterJarStatus.getLen();
+        long hdfsAppMasterJarTimestamp = hdfsAppMasterJarStatus.getModificationTime();
+
+        env.put("AM_JAR_PATH", hdfsAppMasterJarPath.toString());
+        env.put("AM_JAR_TIMESTAMP", Long.toString(hdfsAppMasterJarTimestamp));
+        env.put("AM_JAR_LENGTH", Long.toString(hdfsAppMasterJarLength));
+
+        //...............................
+        LocalResource appJarResource = localResources.get("App.jar");
+
         Path hdfsAppJarPath = new Path(fs.getHomeDirectory(), appJarResource.getResource().getFile());
         FileStatus hdfsAppJarStatus = fs.getFileStatus(hdfsAppJarPath);
         long hdfsAppJarLength = hdfsAppJarStatus.getLen();
         long hdfsAppJarTimestamp = hdfsAppJarStatus.getModificationTime();
 
-        env.put("AM_JAR_PATH", hdfsAppJarPath.toString());
-        env.put("AM_JAR_TIMESTAMP", Long.toString(hdfsAppJarTimestamp));
-        env.put("AM_JAR_LENGTH", Long.toString(hdfsAppJarLength));
+        LOG.debug("Application JAR File Path: " + hdfsAppJarPath.toString());
 
+        env.put("APP_JAR_PATH", hdfsAppJarPath.toString());
+        env.put("APP_JAR_TIMESTAMP", Long.toString(hdfsAppJarTimestamp));
+        env.put("APP_JAR_LENGTH", Long.toString(hdfsAppJarLength));
 
+        //...............................
         LocalResource appConfFileResource = localResources.get("muses-conf.json");
         Path hdfsAppConfFilePath = new Path(fs.getHomeDirectory(), appConfFileResource.getResource().getFile());
         FileStatus hdfsAppConfFileStatus = fs.getFileStatus(hdfsAppJarPath);
@@ -304,9 +325,12 @@ public class Client {
         long hdfsAppConfFileTimestamp = hdfsAppConfFileStatus.getModificationTime();
 
         LOG.debug("Conf File Path: " + hdfsAppConfFilePath.toString());
+
         env.put("AM_CONF_FILE_PATH", hdfsAppConfFilePath.toString());
         env.put("AM_CONF_FILE_TIMESTAMP", Long.toString(hdfsAppConfFileTimestamp));
         env.put("AM_CONF_FILE_LENGTH", Long.toString(hdfsAppConfFileLength));
+
+        //...............................
 
 
         StringBuilder classPathEnv = new StringBuilder(ApplicationConstants.Environment.CLASSPATH.$$())
@@ -332,7 +356,7 @@ public class Client {
             FSDataOutputStream ostream = null;
             try {
                 ostream = FileSystem
-                        .create(fs, dst, new FsPermission((short) 0710));
+                        .create(fs, dst, new FsPermission((short) 0777));
                 ostream.writeUTF(resources);
             } finally {
                 IOUtils.closeQuietly(ostream);
