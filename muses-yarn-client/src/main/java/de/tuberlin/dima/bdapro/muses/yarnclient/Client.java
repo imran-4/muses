@@ -45,6 +45,7 @@ public class Client {
         options.addOption("jar", true, "JAR file containing the application master.");
         options.addOption("app_jar", true, "JAR file containing the application.");
         options.addOption("conf", true, "Configuration file for the nodes running Muses.");
+        options.addOption("akka_conf", true, "Configuration file for the nodes running Muses.");
 
         options.addOption("queue", true, "Resource Manager Queue.");
 
@@ -101,6 +102,7 @@ public class Client {
         String applicationMasterJarPath = cliParser.getOptionValue("jar");
         String applicationJarPath = cliParser.getOptionValue("app_jar");
         String applicationConfFilePath = cliParser.getOptionValue("conf");
+        String akkaConfFilePath = cliParser.getOptionValue("akka_conf");
         int containerMemory = Integer.parseInt(cliParser.getOptionValue("container_memory", "512"));
         int containerVirtualCores = Integer.parseInt(cliParser.getOptionValue("container_vcores", "1"));
         int numContainers = Integer.parseInt(cliParser.getOptionValue("number_of_containers", "1"));
@@ -172,6 +174,8 @@ public class Client {
             Client.addResources(applicationName, fs, applicationJarPath, "App.jar", appId.getId(),
                     localResources, null);
             Client.addResources(applicationName, fs, applicationConfFilePath, "muses-conf.json", appId.getId(),
+                    localResources, null);
+            Client.addResources(applicationName, fs, akkaConfFilePath, "application.conf", appId.getId(),
                     localResources, null);
         } catch (IOException ex) {
             LOG.fatal("IOException has occured. ", ex);
@@ -320,7 +324,7 @@ public class Client {
         //...............................
         LocalResource appConfFileResource = localResources.get("muses-conf.json");
         Path hdfsAppConfFilePath = new Path(fs.getHomeDirectory(), appConfFileResource.getResource().getFile());
-        FileStatus hdfsAppConfFileStatus = fs.getFileStatus(hdfsAppJarPath);
+        FileStatus hdfsAppConfFileStatus = fs.getFileStatus(hdfsAppConfFilePath);
         long hdfsAppConfFileLength = hdfsAppConfFileStatus.getLen();
         long hdfsAppConfFileTimestamp = hdfsAppConfFileStatus.getModificationTime();
 
@@ -329,6 +333,19 @@ public class Client {
         env.put("AM_CONF_FILE_PATH", hdfsAppConfFilePath.toString());
         env.put("AM_CONF_FILE_TIMESTAMP", Long.toString(hdfsAppConfFileTimestamp));
         env.put("AM_CONF_FILE_LENGTH", Long.toString(hdfsAppConfFileLength));
+
+        //...............................
+        LocalResource akkaConfFileResource = localResources.get("application.conf");
+        Path hdfsAkkaConfFilePath = new Path(fs.getHomeDirectory(), akkaConfFileResource.getResource().getFile());
+        FileStatus hdfsAkkaConfFileStatus = fs.getFileStatus(hdfsAkkaConfFilePath);
+        long hdfsAkkaConfFileLength = hdfsAkkaConfFileStatus.getLen();
+        long hdfsAkkaConfFileTimestamp = hdfsAkkaConfFileStatus.getModificationTime();
+
+        LOG.info("AKKA Conf File Path: " + hdfsAkkaConfFilePath.toString());
+
+        env.put("AKKA_CONF_FILE_PATH", hdfsAkkaConfFilePath.toString());
+        env.put("AKKA_CONF_FILE_TIMESTAMP", Long.toString(hdfsAkkaConfFileTimestamp));
+        env.put("AKKA_CONF_FILE_LENGTH", Long.toString(hdfsAkkaConfFileLength));
 
         //...............................
 

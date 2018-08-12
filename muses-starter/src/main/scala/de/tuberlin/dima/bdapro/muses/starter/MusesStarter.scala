@@ -1,6 +1,6 @@
 package de.tuberlin.dima.bdapro.muses.starter
 
-import java.io.IOException
+import java.io.{File, IOException}
 import java.net.InetAddress
 import java.nio.charset.{Charset, StandardCharsets}
 import java.nio.file.{Files, Paths}
@@ -31,6 +31,8 @@ object MusesStarter {
   }
 
   def main(args: Array[String]): Unit = {
+
+    var akkaConfigFilePath: String = args(1)
 
     println("JSON CONTENT: " + args(0))
 
@@ -148,10 +150,13 @@ object MusesStarter {
     var pubAddress: InetAddress = InetAddress.getByName(publishers.get(0).ip)
     var subAddress: InetAddress = InetAddress.getByName(subscribers.get(0).ip)
 
+    var akkaConfFile = new File(akkaConfigFilePath)
 
     if (subAddress.equals(host)) {
       println("Found Subscriber. Creating it.")
       var mainSub = new MainPubSub
+      mainSub.loadConfiguration(akkaConfFile)
+      mainSub.createActorSystem()
       mainSub.createSubscriber(subscribers.get(0).actorName)
       mainSub.attachShutdownHook()
     } else if (pubAddress.equals(host)) {
@@ -170,6 +175,8 @@ object MusesStarter {
       var os = writer.getByteArrayOutputStream()
 
       var mainPub = new MainPubSub
+      mainPub.loadConfiguration(akkaConfFile)
+      mainPub.createActorSystem()
       mainPub.createPubliser(publishers.get(0).actorName)
       Thread.sleep(5000)
       mainPub.publishSchema(schema)

@@ -46,14 +46,17 @@ public class ApplicationMaster {
         String appMasterJarPath = "";
         String appJarPath = "";
         String appConfFilePath = "";
+        String akkaConfFilePath = "";
 
         long appJarTimestamp = 0;
         long appMasterJarTimestamp = 0;
         long appConfFileTimestamp = 0;
+        long akkaConfFileTimestamp = 0;
 
         long appJarPathLen = 0;
         long appMasterJarPathLen = 0;
         long appConfFilePathLen = 0;
+        long akkaConfFilePathLen = 0;
 
         Configuration conf = new YarnConfiguration();
         Options options = ApplicationMaster.getCliArgs();
@@ -133,11 +136,25 @@ public class ApplicationMaster {
             if (envs.containsKey("AM_CONF_FILE_TIMESTAMP")) {
                 appConfFileTimestamp = Long.valueOf(envs.get("AM_CONF_FILE_TIMESTAMP"));
             }
-            if (envs.containsKey("AM_JAR_LENGTH")) {
+            if (envs.containsKey("AM_CONF_FILE_LENGTH")) {
                 appConfFilePathLen = Long.valueOf(envs.get("AM_CONF_FILE_LENGTH"));
             }
             if (!appConfFilePath.isEmpty() && (appConfFileTimestamp <= 0 || appConfFilePathLen <= 0)) {
                 LOG.error("Invalid values for the jar related environment variables. Values are: Jar Path: " + appConfFilePath  + ", Length: " + appConfFilePathLen + ", Timestamp: " + appConfFileTimestamp);
+                throw new IllegalArgumentException("Invalid values for the config related environment variables.");
+            }
+        }
+        if (envs.containsKey("AKKA_CONF_FILE_PATH")) {
+            akkaConfFilePath = envs.get("AKKA_CONF_FILE_PATH");
+
+            if (envs.containsKey("AKKA_CONF_FILE_TIMESTAMP")) {
+                akkaConfFileTimestamp = Long.valueOf(envs.get("AKKA_CONF_FILE_TIMESTAMP"));
+            }
+            if (envs.containsKey("AKKA_CONF_FILE_LENGTH")) {
+                akkaConfFilePathLen = Long.valueOf(envs.get("AKKA_CONF_FILE_LENGTH"));
+            }
+            if (!akkaConfFilePath.isEmpty() && (akkaConfFileTimestamp <= 0 || akkaConfFilePathLen <= 0)) {
+                LOG.error("Invalid values for the jar related environment variables. Values are: File Path: " + akkaConfFilePath  + ", Length: " + akkaConfFilePathLen + ", Timestamp: " + akkaConfFileTimestamp);
                 throw new IllegalArgumentException("Invalid values for the config related environment variables.");
             }
         }
@@ -197,9 +214,19 @@ public class ApplicationMaster {
             Path confFilePath = new Path(appConfFilePath);
             confFilePath = FileSystem.get(conf).makeQualified(confFilePath);
             appConfFile.setResource(ConverterUtils.getYarnUrlFromPath(confFilePath));
-            appConfFile.setTimestamp(appJarTimestamp);
-            appConfFile.setSize(appJarPathLen);
+            appConfFile.setTimestamp(appConfFileTimestamp);
+            appConfFile.setSize(appConfFilePathLen);
             appConfFile.setVisibility(LocalResourceVisibility.PUBLIC);
+        }
+        LocalResource akkaConfFile = Records.newRecord(LocalResource.class);
+        if (!akkaConfFilePath.isEmpty()) {
+            akkaConfFile.setType(LocalResourceType.FILE);
+            Path confFilePath = new Path(akkaConfFilePath);
+            confFilePath = FileSystem.get(conf).makeQualified(confFilePath);
+            akkaConfFile.setResource(ConverterUtils.getYarnUrlFromPath(confFilePath));
+            akkaConfFile.setTimestamp(akkaConfFileTimestamp);
+            akkaConfFile.setSize(akkaConfFilePathLen);
+            akkaConfFile.setVisibility(LocalResourceVisibility.PUBLIC);
         }
         int allocatedContainers = 0;
         int completedContainers = 0;
@@ -212,11 +239,12 @@ public class ApplicationMaster {
 //                map.put("AppMaster.jar", appMasterJar);
                 map.put("App.jar", appJar);
                 map.put("muses-conf.json", appConfFile);
+                map.put("application.conf", akkaConfFile);
                 appContainer.setLocalResources(map);
                 appContainer.setEnvironment(containerEnv);
 //                LOG.info("CONF PATH: " + appConfFile.getResource().getFile());
 //                LOG.info("JAR PATH: " + appJar.getResource().getFile());
-                appContainer.setCommands(Collections.singletonList("$JAVA_HOME/bin/java" + " -Xmx512M" + " de.tuberlin.dima.bdapro.muses.starter.MusesStarter " + appConfFile.getResource().getFile() + " 1>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stdout" + " 2>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stderr"));
+                appContainer.setCommands(Collections.singletonList("$JAVA_HOME/bin/java" + " -Xmx512M" + " de.tuberlin.dima.bdapro.muses.starter.MusesStarter " + appConfFile.getResource().getFile() + " " + akkaConfFile.getResource().getFile() + " 1>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stdout" + " 2>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stderr"));
                 LOG.info("Launching the container");
                 nmClient.startContainer(container, appContainer);
             }

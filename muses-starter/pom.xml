@@ -93,6 +93,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>reference.conf</resource>
+                                    <resource>application.conf</resource>
                                 </transformer>
                             </transformers>
                         </configuration>
