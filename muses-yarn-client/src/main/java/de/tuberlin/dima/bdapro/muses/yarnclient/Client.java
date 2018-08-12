@@ -24,7 +24,7 @@ import org.apache.hadoop.yarn.util.Records;
 import java.io.IOException;
 import java.util.*;
 
-//COMMAND: $HADOOP_HOME/bin/yarn jar muses-yarn-client/target/muses-yarn-client-1.0.0-SNAPSHOT.jar de.tuberlin.dima.bdapro.muses.yarnclient.Client -jar muses-yarn-appmaster/target/muses-yarn-appmaster-1.0.0-SNAPSHOT.jar -number_of_containers=1 -app_jar muses-starter/target/muses-starter-1.0.0-SNAPSHOT.jar -conf=muses-config.json
+//COMMAND: $HADOOP_HOME/bin/yarn jar muses-yarn-client/target/muses-yarn-client-1.0.0-SNAPSHOT.jar de.tuberlin.dima.bdapro.muses.yarnclient.Client -jar muses-yarn-appmaster/target/muses-yarn-appmaster-1.0.0-SNAPSHOT.jar -number_of_containers 1 -app_jar muses-starter/target/muses-starter-1.0.0-SNAPSHOT.jar -conf muses-config.json
 public class Client {
     private static final Log LOG = LogFactory.getLog(Client.class);
 
@@ -311,7 +311,7 @@ public class Client {
         long hdfsAppJarLength = hdfsAppJarStatus.getLen();
         long hdfsAppJarTimestamp = hdfsAppJarStatus.getModificationTime();
 
-        LOG.debug("Application JAR File Path: " + hdfsAppJarPath.toString());
+        LOG.info("Application JAR File Path: " + hdfsAppJarPath.toString());
 
         env.put("APP_JAR_PATH", hdfsAppJarPath.toString());
         env.put("APP_JAR_TIMESTAMP", Long.toString(hdfsAppJarTimestamp));
@@ -324,7 +324,7 @@ public class Client {
         long hdfsAppConfFileLength = hdfsAppConfFileStatus.getLen();
         long hdfsAppConfFileTimestamp = hdfsAppConfFileStatus.getModificationTime();
 
-        LOG.debug("Conf File Path: " + hdfsAppConfFilePath.toString());
+        LOG.info("Conf File Path: " + hdfsAppConfFilePath.toString());
 
         env.put("AM_CONF_FILE_PATH", hdfsAppConfFilePath.toString());
         env.put("AM_CONF_FILE_TIMESTAMP", Long.toString(hdfsAppConfFileTimestamp));
@@ -356,7 +356,7 @@ public class Client {
             FSDataOutputStream ostream = null;
             try {
                 ostream = FileSystem
-                        .create(fs, dst, new FsPermission((short) 0777));
+                        .create(fs, dst, new FsPermission((short) 0710));
                 ostream.writeUTF(resources);
             } finally {
                 IOUtils.closeQuietly(ostream);

@@ -168,16 +168,16 @@ public class ApplicationMaster {
         nmClient.start();
         Map<String, String> containerEnv = new HashMap<String, String>();
         containerEnv.put("CLASSPATH", "./*");
-        LocalResource appMasterJar = Records.newRecord(LocalResource.class);
-        if (!appMasterJarPath.isEmpty()) {
-            appMasterJar.setType(LocalResourceType.FILE);
-            Path jarPath = new Path(appMasterJarPath);
-            jarPath = FileSystem.get(conf).makeQualified(jarPath);
-            appMasterJar.setResource(ConverterUtils.getYarnUrlFromPath(jarPath));
-            appMasterJar.setTimestamp(appJarTimestamp);
-            appMasterJar.setSize(appJarPathLen);
-            appMasterJar.setVisibility(LocalResourceVisibility.PUBLIC);
-        }
+//        LocalResource appMasterJar = Records.newRecord(LocalResource.class);
+//        if (!appMasterJarPath.isEmpty()) {
+//            appMasterJar.setType(LocalResourceType.FILE);
+//            Path jarPath = new Path(appMasterJarPath);
+//            jarPath = FileSystem.get(conf).makeQualified(jarPath);
+//            appMasterJar.setResource(ConverterUtils.getYarnUrlFromPath(jarPath));
+//            appMasterJar.setTimestamp(appJarTimestamp);
+//            appMasterJar.setSize(appJarPathLen);
+//            appMasterJar.setVisibility(LocalResourceVisibility.PUBLIC);
+//        }
 
         LocalResource appJar = Records.newRecord(LocalResource.class);
         if (!appJarPath.isEmpty()) {
@@ -209,12 +209,14 @@ public class ApplicationMaster {
                 allocatedContainers++;
                 ContainerLaunchContext appContainer = Records.newRecord(ContainerLaunchContext.class);
                 Map<String, LocalResource> map = new HashMap<String, LocalResource>();
-                map.put("AppMaster.jar", appMasterJar);
+//                map.put("AppMaster.jar", appMasterJar);
                 map.put("App.jar", appJar);
                 map.put("muses-conf.json", appConfFile);
                 appContainer.setLocalResources(map);
                 appContainer.setEnvironment(containerEnv);
-                appContainer.setCommands(Collections.singletonList("$JAVA_HOME/bin/java" + " -Xmx512M" + " -jar " + appJarPath + " de.tuberlin.dima.bdapro.muses.starter.MusesStarter " + appConfFilePath + " 1>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stdout" + " 2>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stderr"));
+//                LOG.info("CONF PATH: " + appConfFile.getResource().getFile());
+//                LOG.info("JAR PATH: " + appJar.getResource().getFile());
+                appContainer.setCommands(Collections.singletonList("$JAVA_HOME/bin/java" + " -Xmx512M" + " de.tuberlin.dima.bdapro.muses.starter.MusesStarter " + appConfFile.getResource().getFile() + " 1>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stdout" + " 2>" + ApplicationConstants.LOG_DIR_EXPANSION_VAR + "/stderr"));
                 LOG.info("Launching the container");
                 nmClient.startContainer(container, appContainer);
             }
